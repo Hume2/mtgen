@@ -2,3 +2,4 @@ mtgen
 mtgen.*
 *.o
 *.d
+training/*.png
