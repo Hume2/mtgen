@@ -1,0 +1,4 @@
+mtgen
+mtgen.*
+*.o
+*.d
