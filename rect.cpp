@@ -20,6 +20,10 @@ Rect::Rect(int x1_, int y1_, int x2_, int y2_):
 
 }
 
+int Rect::surface() const {
+  return (x2 - x1) * (y2 - y1);
+}
+
 std::vector<Rect> load_rects(std::string filename) {
   FILE *f;
   std::vector<Rect> result;
