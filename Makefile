@@ -3,8 +3,8 @@ OBJECTS = $(SOURCES:.cpp=.o)
 DEPS = $(SOURCES:%.cpp=%.d)
 TARGET = mtgen
 
-CFLAGS = -std=gnu++14 -O2
-LFLAGS = -lm -O2
+CFLAGS = -std=gnu++14 -O2 `libpng-config --cflags`
+LFLAGS = -lm -O2 `libpng-config --ldflags`
 
 all: $(TARGET)
 
