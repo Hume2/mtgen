@@ -21,3 +21,9 @@ Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_) :
 VectorEntry Trainer::generate_random() const {
   return VectorEntry(minimum, maximum);
 }
+
+void Trainer::populate(int fakes) {
+  for (int i = fakes; i; --i) {
+    dataset.push_back(generate_random());
+  }
+}

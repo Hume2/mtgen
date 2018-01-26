@@ -15,6 +15,8 @@ class Trainer
 
     VectorEntry generate_random() const;
 
+    void populate(int fakes);
+
   private:
     int vector_size;
 
