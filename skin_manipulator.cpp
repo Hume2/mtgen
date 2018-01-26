@@ -6,6 +6,7 @@
 #include "skin_manipulator.h"
 
 #include "pixel_tools.h"
+#include "vector_entry.h"
 
 SkinManipulator::SkinManipulator(std::string rectlist_filename):
   rectlist(load_rects(rectlist_filename)),
@@ -17,12 +18,12 @@ SkinManipulator::SkinManipulator(std::string rectlist_filename):
   std::cout << "Skin vector dimension is " << vector_size << ".\n";
 }
 
-boost::numeric::ublas::vector<double> SkinManipulator::load(std::string filename) {
+VectorEntry SkinManipulator::load(std::string filename) {
   using namespace boost::numeric::ublas;
   png::image<png::rgba_pixel> image(filename.c_str()/*, png::require_color_space<png::rgba_pixel>()*/);
   if (image.get_width() < WIDTH || image.get_height() < HEIGHT) {
     std::cout << "Image \"" << filename << "\" is too small!\n";
-    return zero_vector<double>(vector_size);
+    return VectorEntry(zero_vector<double>(vector_size));
   }
 
   vector<double> result(vector_size);
@@ -40,11 +41,11 @@ boost::numeric::ublas::vector<double> SkinManipulator::load(std::string filename
     }
   }
 
-  return result;
+  return VectorEntry(result);
 }
 
-void SkinManipulator::save(boost::numeric::ublas::vector<double> img, std::string filename) {
-  using namespace boost::numeric::ublas;
+void SkinManipulator::save(VectorEntry img, std::string filename) {
+  //using namespace boost::numeric::ublas;
   png::image<png::rgba_pixel> image(WIDTH, HEIGHT);
 
   int i = 0;
@@ -54,7 +55,7 @@ void SkinManipulator::save(boost::numeric::ublas::vector<double> img, std::strin
   for (auto it : rectlist) {
     for (int y = it.y1; y < it.y2; ++y) {
       for (int x = it.x1; x < it.x2; ++x) {
-        d = img[i] + previous;
+        d = img.vector[i] + previous;
         if (d < 0) {
           u = 0;
         } else if (d > 0xFFFFFFFF) {
@@ -72,8 +73,8 @@ void SkinManipulator::save(boost::numeric::ublas::vector<double> img, std::strin
   image.write(filename.c_str());
 }
 
-void SkinManipulator::save_derivation(boost::numeric::ublas::vector<double> img, std::string filename) {
-  using namespace boost::numeric::ublas;
+void SkinManipulator::save_derivation(VectorEntry img, std::string filename) {
+  //using namespace boost::numeric::ublas;
   png::image<png::rgba_pixel> image(WIDTH, HEIGHT);
 
   int i = 0;
@@ -82,7 +83,7 @@ void SkinManipulator::save_derivation(boost::numeric::ublas::vector<double> img,
   for (auto it : rectlist) {
     for (int y = it.y1; y < it.y2; ++y) {
       for (int x = it.x1; x < it.x2; ++x) {
-        d = img[i] + 0x80E00000;
+        d = img.vector[i] + 0x80E00000;
         if (d < 0) {
           u = 0;
         } else if (d > 0xFFFFFFFF) {
@@ -99,10 +100,10 @@ void SkinManipulator::save_derivation(boost::numeric::ublas::vector<double> img,
   image.write(filename.c_str());
 }
 
-std::vector<boost::numeric::ublas::vector<double> > SkinManipulator::load_all_skins(std::string dirname) {
+std::vector<VectorEntry> SkinManipulator::load_all_skins(std::string dirname) {
   using namespace boost::numeric::ublas;
   using namespace boost::filesystem;
-  std::vector<vector<double> > result;
+  std::vector<VectorEntry> result;
 
   std::vector<directory_entry> v;
   if(is_directory(dirname.c_str())) {
