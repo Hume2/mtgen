@@ -3,3 +3,5 @@ mtgen.*
 *.o
 *.d
 training/*.png
+test.png
+random.png
