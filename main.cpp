@@ -18,6 +18,7 @@ int main(int argc, char** argv) {
   std::cout << arriva.size() << std::endl;
 
   Trainer tr(sm.get_vector_size(), arriva);
+  tr.calculate_division(true);
   sm.save(tr.generate_random(), "random.png");
   return 0;
 }
