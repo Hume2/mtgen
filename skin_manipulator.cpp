@@ -33,6 +33,9 @@ VectorEntry SkinManipulator::load(std::string filename) {
   for (auto it : rectlist) {
     for (int y = it.y1; y < it.y2; ++y) {
       for (int x = it.x1; x < it.x2; ++x) {
+        if (i < 1184) {
+          image[y][x].alpha = 255;
+        }
         d = clr_to_int(image[y][x]);
         result[i] = d - previous;
         previous = d;
@@ -64,6 +67,9 @@ void SkinManipulator::save(VectorEntry img, std::string filename) {
           u = d;
         }
         image[y][x] = int_to_clr(u);
+        if (i < 1184) {
+          image[y][x].alpha = 255;
+        }
         previous = d;
         ++i;
       }

@@ -18,6 +18,7 @@ class SkinManipulator
     const int HEIGHT = 32;
 
     VectorEntry load(std::string filename);
+    VectorEntry load_integral(std::string filename);
     void save(VectorEntry img, std::string filename);
     void save_derivation(VectorEntry img, std::string filename);
 
