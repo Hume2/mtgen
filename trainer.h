@@ -21,9 +21,11 @@ class Trainer
 
     void calculate_centres();
     void calculate_division(bool delete_data);
+    void subdivide(int max_depth, bool delete_data);
 
     int get_true_count() const;
     int get_fake_count() const;
+    bool is_pure() const;
 
   private:
     std::vector<VectorEntry> dataset;

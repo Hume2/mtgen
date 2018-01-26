@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "trainer.h"
 
 Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_) :
@@ -24,6 +26,7 @@ Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_
       }
     }
   }
+  std::cout << "Trainer (depth " << depth << ") has dataset with " << dataset.size() << " vectors." << std::endl;
 }
 
 VectorEntry Trainer::generate_random() const {
@@ -76,6 +79,10 @@ int Trainer::get_fake_count() const {
   return fake_count;
 }
 
+bool Trainer::is_pure() const {
+  return (true_count == 0) || (fake_count == 0);
+}
+
 void Trainer::calculate_division(bool delete_data) {
   using namespace boost::numeric::ublas;
   calculate_centres();
@@ -98,5 +105,24 @@ void Trainer::calculate_division(bool delete_data) {
 
   if (delete_data) {
     dataset.clear();
+  }
+}
+
+void Trainer::subdivide(int max_depth, bool delete_data) {
+  if (depth >= max_depth) {
+    return;
+  }
+
+  if (!positive) {
+    calculate_division(delete_data);
+  }
+
+  positive->calculate_division(delete_data);
+  negative->calculate_division(delete_data);
+  if (!positive->is_pure()) {
+    positive->subdivide(max_depth, delete_data);
+  }
+  if (!negative->is_pure()) {
+    negative->subdivide(max_depth, delete_data);
   }
 }
