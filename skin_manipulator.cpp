@@ -120,6 +120,6 @@ std::vector<boost::numeric::ublas::vector<double> > SkinManipulator::load_all_sk
   return result;
 }
 
-int SkinManipulator::get_vector_size() {
+int SkinManipulator::get_vector_size() const {
   return vector_size;
 }
