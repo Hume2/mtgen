@@ -7,6 +7,8 @@
 
 #include "rect.h"
 
+class VectorEntry;
+
 class SkinManipulator
 {
   public:
@@ -15,11 +17,11 @@ class SkinManipulator
     const int WIDTH = 64;
     const int HEIGHT = 32;
 
-    boost::numeric::ublas::vector<double> load(std::string filename);
-    void save(boost::numeric::ublas::vector<double> img, std::string filename);
-    void save_derivation(boost::numeric::ublas::vector<double> img, std::string filename);
+    VectorEntry load(std::string filename);
+    void save(VectorEntry img, std::string filename);
+    void save_derivation(VectorEntry img, std::string filename);
 
-    std::vector<boost::numeric::ublas::vector<double> > load_all_skins(std::string dirname);
+    std::vector<VectorEntry> load_all_skins(std::string dirname);
 
     int get_vector_size() const;
 

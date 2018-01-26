@@ -15,13 +15,7 @@ VectorEntry::VectorEntry(const boost::numeric::ublas::vector<double>& min,
   is_true(is_true_)
 {
   for (int i = vector.size()-1; i >= 0; --i) {
-    if (max[i] > min[i]) {
-      vector[i] = fmod(double(random()), max[i] - min[i]) + min[i];
-    } else if (max[i] < min[i]) {
-      vector[i] = fmod(double(random()), min[i] - max[i]) + max[i];
-    } else {
-      vector[i] = min[i];
-    }
+    vector[i] = (double)rand() / RAND_MAX * (max[i] - min[i]) + min[i];
   }
 }
 
