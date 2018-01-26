@@ -21,6 +21,8 @@ class SkinManipulator
 
     std::vector<boost::numeric::ublas::vector<double> > load_all_skins(std::string dirname);
 
+    int get_vector_size() const;
+
   private:
     std::vector<Rect> rectlist;
     int vector_size;
