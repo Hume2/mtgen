@@ -1,5 +1,7 @@
 #include <random>
 
+#include <stdio.h>
+
 #include "vector_entry.h"
 
 VectorEntry::VectorEntry(boost::numeric::ublas::vector<double> vector_, bool is_true_) :
