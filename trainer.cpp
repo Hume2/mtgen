@@ -36,7 +36,6 @@ Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_
 }
 
 VectorEntry Trainer::generate_random() const {
-  //return VectorEntry(minimum, maximum);
   VectorEntry result(minimum, maximum);
   categorise(result);
   return result;
@@ -61,14 +60,6 @@ void Trainer::categorise(VectorEntry& vec) const {
     return;
   }
   bool part = get_random_half();
-  /*if (!positive->get_true_count()) {
-    part = false;
-  } else if (!negative->get_true_count()) {
-    part = true;
-  } else {
-    int sel = ((int)rand()) % true_count;
-    part = sel >= negative->get_true_count();
-  }*/
 
   division->mirror(vec.vector, part);
   if (part) {
@@ -98,6 +89,18 @@ void Trainer::populate(int fakes) {
     VectorEntry fake(minimum, maximum);
     add_fake(fake);
   }
+  /*if (division && positive->true_count) {
+    int f1 = fakes * positive->true_count / true_count;
+    int f2 = fakes - f1;
+    positive->populate(f1);
+    negative->populate(f2);
+  } else {
+    for (int i = fakes; i; --i) {
+      //dataset.push_back(VectorEntry(minimum, maximum));
+      VectorEntry fake(minimum, maximum);
+      add_fake(fake);
+    }
+  }*/
 }
 
 void Trainer::calculate_centres() {
