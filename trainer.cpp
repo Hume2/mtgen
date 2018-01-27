@@ -184,10 +184,9 @@ void Trainer::subdivide(int max_depth, bool delete_data) {
     return;
   }
 
-  std::cout << spaces() << "Dividing trainer (depth " << depth << ") with " << dataset.size()
-            << " vectors." << std::endl;
-
   if (dataset.size()) {
+    std::cout << spaces() << "Dividing trainer (depth " << depth << ") with " << dataset.size()
+              << " vectors." << std::endl;
 
     if (!positive) {
       calculate_division(delete_data);
@@ -234,4 +233,14 @@ void Trainer::show_tree(std::string prefix) {
   if (negative) {
     negative->show_tree(prefix + "  ");
   }
+}
+
+int Trainer::count_trues() const {
+  int result = 0;
+  for (auto it : dataset) {
+    if (it.is_true) {
+      result++;
+    }
+  }
+  return result;
 }

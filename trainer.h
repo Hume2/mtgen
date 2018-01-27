@@ -20,18 +20,20 @@ class Trainer
     void populate(int fakes);
     void subdivide(int max_depth, bool delete_data);
 
+    int count_trues() const;
+
     void show_tree(std::string prefix = "");
+
+    bool is_pure() const;
+    bool is_counted() const;
+    int get_true_count() const;
+    int get_fake_count() const;
 
   protected:
     static int trainer_count;
 
     void calculate_centres();
     void calculate_division(bool delete_data);
-
-    int get_true_count() const;
-    int get_fake_count() const;
-    bool is_pure() const;
-    bool is_counted() const;
 
     bool get_random_half() const;
     void add_fake(VectorEntry& vec);

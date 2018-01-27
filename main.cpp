@@ -19,10 +19,10 @@ int main(int argc, char** argv) {
 
   Trainer tr(sm.get_vector_size(), arriva);
   int max_depth = 10;
-  for (int i = 10; i; --i) {
-    tr.populate(32000);
+  for (int i = 100; i; --i) {
+    tr.populate(2000);
     tr.subdivide(max_depth, true);
-    max_depth += 6;
+    max_depth += 3;
   }
   sm.save(tr.generate_random(), "random.png");
   tr.show_tree();
