@@ -18,11 +18,12 @@ int main(int argc, char** argv) {
   std::cout << arriva.size() << std::endl;
 
   Trainer tr(sm.get_vector_size(), arriva);
-  tr.populate(2000);
-  tr.subdivide(6, true);
-  std::cout << "Retry" << std::endl;
-  tr.populate(2000);
-  tr.subdivide(10, true);
+  int max_depth = 6;
+  for (int i = 2; i; --i) {
+    tr.populate(2000);
+    tr.subdivide(max_depth, true);
+    max_depth += 3;
+  }
   sm.save(tr.generate_random(), "random.png");
   tr.show_tree();
   return 0;

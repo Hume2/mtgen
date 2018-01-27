@@ -119,14 +119,10 @@ void Trainer::calculate_centres() {
 
   if (true_count) {
     true_centre /= true_count;
-  } else {
-    std::cout << spaces() << "Dataset has no trues!" << std::endl;
   }
 
   if (fake_count) {
     fake_centre /= fake_count;
-  } else {
-    std::cout << spaces() << "Dataset has no fakes!" << std::endl;
   }
 }
 
@@ -151,14 +147,14 @@ void Trainer::calculate_division(bool delete_data) {
   calculate_centres();
 
   if (is_pure()) {
-    std::cout << spaces() << "Refusing to divide a pure dataset. Like sorry." << std::endl;
     if (!true_count && delete_data) {
       dataset.clear();
     }
     return;
   }
 
-  division.emplace(DivisionPlane((true_centre + fake_centre)/2, true_centre - fake_centre));
+  division.emplace(DivisionPlane((true_centre*true_count + fake_centre*fake_count)/(true_count + fake_count),
+                                 true_centre - fake_centre));
 
   std::vector<VectorEntry> positive_data;
   std::vector<VectorEntry> negative_data;
@@ -194,32 +190,25 @@ void Trainer::subdivide(int max_depth, bool delete_data) {
       calculate_division(delete_data);
     }
     if (!positive) {
-      std::cout << spaces() << "Subdivision ended on a pure chunk." << std::endl;
       return;
     }
 
-    std::cout << spaces() << "Calculating division in positive (depth" << depth << ")" << std::endl;
     positive->calculate_division(delete_data);
-    std::cout << spaces() << "Calculating division in negative (depth" << depth << ")" << std::endl;
     negative->calculate_division(delete_data);
 
     if (!positive->is_pure()) {
-      std::cout << spaces() << "Passing towards positive in depth " << depth << std::endl;
       positive->subdivide(max_depth, delete_data);
     }
     if (!negative->is_pure()) {
-      std::cout << spaces() << "Passing towards negative in depth " << depth << std::endl;
       negative->subdivide(max_depth, delete_data);
     }
 
   } else {
 
     if (positive /*&& !positive->is_pure()*/) {
-      std::cout << spaces() << "Passing towards positive in depth " << depth << std::endl;
       positive->subdivide(max_depth, delete_data);
     }
     if (negative /*&& !negative->is_pure()*/) {
-      std::cout << spaces() << "Passing towards negative in depth " << depth << std::endl;
       negative->subdivide(max_depth, delete_data);
     }
 
