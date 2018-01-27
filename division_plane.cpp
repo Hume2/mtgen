@@ -15,10 +15,10 @@ double DivisionPlane::rate(const boost::numeric::ublas::vector<double>& vec) con
   return inner_prod(vec - point, vector);
 }
 
-bool DivisionPlane::mirror(boost::numeric::ublas::vector<double> &vec) const {
+bool DivisionPlane::mirror(boost::numeric::ublas::vector<double> &vec, bool positive) const {
   using namespace boost::numeric::ublas;
   double rating = rate(vec);
-  if (rating < 0) {
+  if (positive == (rating < 0)) {
     vec += rating * mirror_precalc;
     return true;
   }

@@ -10,7 +10,7 @@ class DivisionPlane
                   boost::numeric::ublas::vector<double> vector_);
 
     double rate(const boost::numeric::ublas::vector<double>& vec) const;
-    bool mirror(boost::numeric::ublas::vector<double>& vec) const;
+    bool mirror(boost::numeric::ublas::vector<double>& vec, bool positive) const;
 
   private:
     boost::numeric::ublas::vector<double> point;

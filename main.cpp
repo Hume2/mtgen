@@ -20,6 +20,10 @@ int main(int argc, char** argv) {
   Trainer tr(sm.get_vector_size(), arriva);
   tr.populate(2000);
   tr.subdivide(6, true);
+  std::cout << "Retry" << std::endl;
+  tr.populate(2000);
+  tr.subdivide(10, true);
   sm.save(tr.generate_random(), "random.png");
+  tr.show_tree();
   return 0;
 }

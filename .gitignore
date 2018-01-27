@@ -5,3 +5,4 @@ mtgen.*
 training/*.png
 test.png
 random.png
+output.txt
