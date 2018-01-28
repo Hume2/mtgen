@@ -244,3 +244,55 @@ int Trainer::count_trues() const {
   }
   return result;
 }
+
+std::vector<std::vector<bool> > Trainer::get_leaves_recursive(std::vector<bool>& history) const {
+  if (division) {
+    std::vector<std::vector<bool> > result;
+    if (positive && positive->get_true_count()) {
+      std::vector<bool> history2 = history;
+      history2.push_back(true);
+      std::vector<std::vector<bool> > r2 = positive->get_leaves_recursive(history2);
+      result.insert(result.end(), r2.begin(), r2.end());
+    }
+    if (negative && negative->get_true_count()) {
+      std::vector<bool> history2 = history;
+      history2.push_back(false);
+      std::vector<std::vector<bool> > r2 = negative->get_leaves_recursive(history2);
+      result.insert(result.end(), r2.begin(), r2.end());
+    }
+    return result;
+  } else {
+    std::vector<std::vector<bool> > result;
+    if (true_count) {
+      result.push_back(history);
+    }
+    return result;
+  }
+}
+
+std::unique_ptr<Trainer> Trainer::cut_leaf_recursive(std::vector<bool>& history) {
+  bool current = history[0];
+  history.erase(history.begin());
+  if (history.size() > 1) {
+    if (current) {
+      return std::move(positive->cut_leaf_recursive(history));
+    } else {
+      return std::move(negative->cut_leaf_recursive(history));
+    }
+  } else {
+    if (current) {
+      return std::move(positive);
+    } else {
+      return std::move(negative);
+    }
+  }
+}
+
+std::vector<std::vector<bool> > Trainer::get_leaves() const {
+  std::vector<bool> temp;
+  return get_leaves_recursive(temp);
+}
+
+std::unique_ptr<Trainer> Trainer::cut_leaf(std::vector<bool> history) {
+  return std::move(cut_leaf_recursive(history));
+}

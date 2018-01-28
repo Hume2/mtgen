@@ -29,6 +29,9 @@ class Trainer
     int get_true_count() const;
     int get_fake_count() const;
 
+    std::vector<std::vector<bool> > get_leaves() const;
+    std::unique_ptr<Trainer> cut_leaf(std::vector<bool> history);
+
   protected:
     static int trainer_count;
 
@@ -38,6 +41,9 @@ class Trainer
     bool get_random_half() const;
     void add_fake(VectorEntry& vec);
     void categorise(VectorEntry& vec) const;
+
+    std::vector<std::vector<bool> > get_leaves_recursive(std::vector<bool>& history) const;
+    std::unique_ptr<Trainer> cut_leaf_recursive(std::vector<bool>& history);
 
   private:
     int ID;
