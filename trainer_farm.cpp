@@ -6,19 +6,19 @@
 
 TrainerFarm::TrainerFarm(std::unique_ptr<Trainer> first_seed) :
   seeds(),
-  total_trues(first_seed->count_trues())
+  total_trues(first_seed->count_trues()),
+  current_depth(10)
 {
   seeds.push_back(std::move(first_seed));
 }
 
 void TrainerFarm::grow(int cycles) {
-  int max_depth = 10;
   for (int i = cycles; i; --i) {
     populate(2);
     for (auto& it : seeds) {
-      it->subdivide(max_depth, true);
+      it->subdivide(current_depth, true);
     }
-    max_depth += 3;
+    current_depth += 3;
   }
 }
 
@@ -43,4 +43,10 @@ boost::numeric::ublas::vector<double> TrainerFarm::generate_random() const {
     }
   }
   return seeds[0]->generate_random().vector;
+}
+
+void TrainerFarm::show_trees() {
+  for (auto& it : seeds) {
+    it->show_tree();
+  }
 }

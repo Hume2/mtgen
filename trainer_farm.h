@@ -16,9 +16,12 @@ class TrainerFarm
     void populate(int coef);
     boost::numeric::ublas::vector<double> generate_random() const;
 
+    void show_trees();
+
   private:
     std::vector<std::unique_ptr<Trainer> > seeds;
     int total_trues;
+    int current_depth;
 };
 
 #endif // TRAINERFARM_H
