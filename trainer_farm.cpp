@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <random>
 
 #include "trainer_farm.h"
@@ -64,8 +65,11 @@ void TrainerFarm::harverst_one() {
 }
 
 void TrainerFarm::harverst_cycle(int depth_increase) {
+  int size1 = seeds.size();
   current_depth += depth_increase;
-  for (int i = seeds.size(); i; --i) {
+  for (int i = size1; i; --i) {
     harverst_one();
   }
+  std::cout << "Harversted trainer farm. " << size1 << "seeds -> " <<
+               seeds.size() << "seeds" << std::endl;
 }

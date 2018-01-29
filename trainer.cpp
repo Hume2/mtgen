@@ -303,7 +303,7 @@ std::vector<std::vector<bool> > Trainer::get_leaves_recursive(std::vector<bool>&
 std::unique_ptr<Trainer> Trainer::cut_leaf_recursive(std::vector<bool>& history) {
   bool current = history[0];
   history.erase(history.begin());
-  if (history.size() > 1) {
+  if (history.size()) {
     if (current) {
       return std::move(positive->cut_leaf_recursive(history));
     } else {
