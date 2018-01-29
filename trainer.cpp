@@ -1,5 +1,7 @@
+#include <limits>
 #include <stdio.h>
 #include <random>
+#include <math.h>
 
 #include "trainer.h"
 
@@ -10,8 +12,8 @@ Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_
   dataset(dataset_),
   vector_size(vector_size_),
   depth(depth_),
-  minimum(boost::numeric::ublas::zero_vector<double>(vector_size_)),
-  maximum(boost::numeric::ublas::zero_vector<double>(vector_size_)),
+  minimum(vector_size),
+  maximum(vector_size),
   true_centre(vector_size_),
   fake_centre(vector_size_),
   true_count(0),
@@ -20,7 +22,30 @@ Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_
   positive(),
   negative()
 {
+  /*double volume = 0;
   for (int i = vector_size-1; i >= 0; --i) {
+    maximum[i] = std::numeric_limits<double>::min();
+    minimum[i] = std::numeric_limits<double>::max();
+    for (auto it : dataset) {
+      if (it.vector[i] > maximum[i]) {
+        maximum[i] = it.vector[i];
+      }
+      if (it.vector[i] < minimum[i]) {
+        minimum[i] = it.vector[i];
+      }
+    }
+    volume += log2(maximum[i] - minimum[i] + 1);
+  }*/
+  recalculate_minmax();
+  std::cout << spaces() << "Trainer (depth " << depth << ") has dataset with "
+            << dataset.size() << " vectors. V_log = " << get_volume() << std::endl;
+  trainer_count++;
+}
+
+void Trainer::recalculate_minmax() {
+  for (int i = vector_size-1; i >= 0; --i) {
+    maximum[i] = std::numeric_limits<double>::min();
+    minimum[i] = std::numeric_limits<double>::max();
     for (auto it : dataset) {
       if (it.vector[i] > maximum[i]) {
         maximum[i] = it.vector[i];
@@ -30,9 +55,14 @@ Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_
       }
     }
   }
-  std::cout << spaces() << "Trainer (depth " << depth << ") has dataset with "
-            << dataset.size() << " vectors." << std::endl;
-  trainer_count++;
+}
+
+double Trainer::get_volume() const {
+  double volume = 0;
+  for (int i = vector_size-1; i >= 0; --i) {
+    volume += log2(maximum[i] - minimum[i] + 1);
+  }
+  return volume;
 }
 
 VectorEntry Trainer::generate_random() const {
@@ -288,6 +318,21 @@ std::unique_ptr<Trainer> Trainer::cut_leaf_recursive(std::vector<bool>& history)
   }
 }
 
+void Trainer::fill_leaf_recursive(std::vector<bool>& history, VectorEntry& fake) {
+  if (history.size() && division) {
+    bool current = history[0];
+    history.erase(history.begin());
+    division->mirror(fake.vector, current);
+    if (current) {
+      positive->fill_leaf_recursive(history, fake);
+    } else {
+      negative->fill_leaf_recursive(history, fake);
+    }
+  } else {
+    add_fake(fake);
+  }
+}
+
 std::vector<std::vector<bool> > Trainer::get_leaves() const {
   std::vector<bool> temp;
   return get_leaves_recursive(temp);
@@ -295,4 +340,17 @@ std::vector<std::vector<bool> > Trainer::get_leaves() const {
 
 std::unique_ptr<Trainer> Trainer::cut_leaf(std::vector<bool> history) {
   return std::move(cut_leaf_recursive(history));
+}
+
+void Trainer::fill_leaf(std::vector<bool> history, int count) {
+  std::vector<bool> h_;
+  for (int i = count; i; --i) {
+    h_ = history;
+    VectorEntry fake(minimum, maximum);
+    fill_leaf_recursive(h_, fake);
+  }
+}
+
+int Trainer::get_vector_size() const {
+  return vector_size;
 }

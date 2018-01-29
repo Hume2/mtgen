@@ -50,3 +50,22 @@ void TrainerFarm::show_trees() {
     it->show_tree();
   }
 }
+
+void TrainerFarm::harverst_one() {
+  std::vector<std::vector<bool> > leaves = seeds[0]->get_leaves();
+  for (auto it : leaves) {
+    seeds[0]->fill_leaf(it, seeds[0]->get_vector_size());
+    seeds.push_back(std::move(seeds[0]->cut_leaf(it)));
+    Trainer* tr = (*(seeds.end()-1)).get();
+    tr->recalculate_minmax();
+    tr->subdivide(current_depth, true);
+  }
+  seeds.erase(seeds.begin());
+}
+
+void TrainerFarm::harverst_cycle(int depth_increase) {
+  current_depth += depth_increase;
+  for (int i = seeds.size(); i; --i) {
+    harverst_one();
+  }
+}

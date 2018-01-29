@@ -14,6 +14,9 @@ class TrainerFarm
 
     void grow(int cycles);
     void populate(int coef);
+    void harverst_one();
+    void harverst_cycle(int depth_increase);
+
     boost::numeric::ublas::vector<double> generate_random() const;
 
     void show_trees();

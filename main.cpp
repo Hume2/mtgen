@@ -20,7 +20,8 @@ int main(int argc, char** argv) {
   std::cout << arriva.size() << std::endl;
 
   TrainerFarm tf(std::unique_ptr<Trainer>(new Trainer(sm.get_vector_size(), arriva)));
-  tf.grow(20);
+  tf.grow(3);
+  tf.harverst_cycle(14);
   sm.save(tf.generate_random(), "random.png");
   tf.show_trees();
   return 0;
