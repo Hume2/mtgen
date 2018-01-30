@@ -17,12 +17,10 @@ class SkinManipulator
     const int WIDTH = 64;
     const int HEIGHT = 32;
 
-    VectorEntry load(std::string filename, bool integral);
-    //VectorEntry load_integral(std::string filename);
-    void save(VectorEntry img, std::string filename, bool derivation);
-    //void save_derivation(VectorEntry img, std::string filename);
+    VectorEntry load(std::string filename, bool integral, bool decompose);
+    void save(VectorEntry img, std::string filename, bool derivation, bool compose);
 
-    std::vector<VectorEntry> load_all_skins(std::string dirname, bool integral = false);
+    std::vector<VectorEntry> load_all_skins(std::string dirname, bool integral = false, bool decompose = true);
 
     int get_vector_size() const;
 
