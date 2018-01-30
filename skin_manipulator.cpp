@@ -18,9 +18,9 @@ SkinManipulator::SkinManipulator(std::string rectlist_filename):
   std::cout << "Skin vector dimension is " << vector_size << ".\n";
 }
 
-VectorEntry SkinManipulator::load(std::string filename) {
+VectorEntry SkinManipulator::load(std::string filename, bool integral) {
   using namespace boost::numeric::ublas;
-  png::image<png::rgba_pixel> image(filename.c_str()/*, png::require_color_space<png::rgba_pixel>()*/);
+  png::image<png::rgba_pixel> image(filename.c_str());
   if (image.get_width() < WIDTH || image.get_height() < HEIGHT) {
     std::cout << "Image \"" << filename << "\" is too small!\n";
     return VectorEntry(zero_vector<double>(vector_size));
@@ -37,8 +37,12 @@ VectorEntry SkinManipulator::load(std::string filename) {
           image[y][x].alpha = 255;
         }
         d = clr_to_int(image[y][x]);
-        result[i] = d - previous;
-        previous = d;
+        if (integral) {
+          result[i] = d;
+        } else {
+          result[i] = d - previous;
+          previous = d;
+        }
         ++i;
       }
     }
@@ -47,7 +51,34 @@ VectorEntry SkinManipulator::load(std::string filename) {
   return VectorEntry(result);
 }
 
-void SkinManipulator::save(VectorEntry img, std::string filename) {
+/*VectorEntry SkinManipulator::load_integral(std::string filename) {
+  using namespace boost::numeric::ublas;
+  png::image<png::rgba_pixel> image(filename.c_str());
+  if (image.get_width() < WIDTH || image.get_height() < HEIGHT) {
+    std::cout << "Image \"" << filename << "\" is too small!\n";
+    return VectorEntry(zero_vector<double>(vector_size));
+  }
+
+  vector<double> result(vector_size);
+  int i = 0;
+  double d;
+  for (auto it : rectlist) {
+    for (int y = it.y1; y < it.y2; ++y) {
+      for (int x = it.x1; x < it.x2; ++x) {
+        if (i < 1184) {
+          image[y][x].alpha = 255;
+        }
+        d = clr_to_int(image[y][x]);
+        result[i] = d;
+        ++i;
+      }
+    }
+  }
+
+  return VectorEntry(result);
+}*/
+
+void SkinManipulator::save(VectorEntry img, std::string filename, bool derivation) {
   //using namespace boost::numeric::ublas;
   png::image<png::rgba_pixel> image(WIDTH, HEIGHT);
 
@@ -58,7 +89,11 @@ void SkinManipulator::save(VectorEntry img, std::string filename) {
   for (auto it : rectlist) {
     for (int y = it.y1; y < it.y2; ++y) {
       for (int x = it.x1; x < it.x2; ++x) {
-        d = img.vector[i] + previous;
+        if (derivation) {
+          d = img.vector[i] + 0x80E00000;
+        } else {
+          d = img.vector[i] + previous;
+        }
         if (d < 0) {
           u = 0;
         } else if (d > 0xFFFFFFFF) {
@@ -79,7 +114,7 @@ void SkinManipulator::save(VectorEntry img, std::string filename) {
   image.write(filename.c_str());
 }
 
-void SkinManipulator::save_derivation(VectorEntry img, std::string filename) {
+/*void SkinManipulator::save_derivation(VectorEntry img, std::string filename) {
   //using namespace boost::numeric::ublas;
   png::image<png::rgba_pixel> image(WIDTH, HEIGHT);
 
@@ -104,9 +139,9 @@ void SkinManipulator::save_derivation(VectorEntry img, std::string filename) {
   }
 
   image.write(filename.c_str());
-}
+}*/
 
-std::vector<VectorEntry> SkinManipulator::load_all_skins(std::string dirname) {
+std::vector<VectorEntry> SkinManipulator::load_all_skins(std::string dirname, bool integral) {
   using namespace boost::numeric::ublas;
   using namespace boost::filesystem;
   std::vector<VectorEntry> result;
@@ -118,7 +153,7 @@ std::vector<VectorEntry> SkinManipulator::load_all_skins(std::string dirname) {
     for ( std::vector<directory_entry>::const_iterator it = v.begin(); it != v.end();  ++ it )
     {
       if (std::string((*it).path().extension().string()) == ".png") {
-        result.push_back(load((*it).path().string()));
+        result.push_back(load((*it).path().string(), integral));
         //std::cout << result.size() << std::endl;
       }
     }

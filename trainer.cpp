@@ -31,8 +31,8 @@ Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_
 {
   matrix_branch = matrix_branch_;
   recalculate_minmax();
-  std::cout << spaces() << "Trainer (depth " << depth << ") has dataset with "
-            << dataset.size() << " vectors. V_log = " << get_volume() << std::endl;
+  //std::cout << spaces() << "Trainer (depth " << depth << ") has dataset with "
+  //          << dataset.size() << " vectors. V_log = " << get_volume() << std::endl;
   trainer_count++;
 }
 
@@ -197,13 +197,13 @@ void Trainer::calculate_division(bool delete_data) {
 
 void Trainer::subdivide(int max_depth, bool delete_data) {
   if (depth >= max_depth) {
-    std::cout << spaces() << "Maximum depth exceeded." << std::endl;
+    //std::cout << spaces() << "Maximum depth exceeded." << std::endl;
     return;
   }
 
   if (dataset.size()) {
-    std::cout << spaces() << "Dividing trainer (depth " << depth << ") with " << dataset.size()
-              << " vectors." << std::endl;
+    //std::cout << spaces() << "Dividing trainer (depth " << depth << ") with " << dataset.size()
+    //          << " vectors." << std::endl;
 
     if (!positive) {
       calculate_division(delete_data);
