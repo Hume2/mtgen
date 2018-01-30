@@ -10,6 +10,7 @@ class MatrixBranch
 {
   public:
     MatrixBranch(const boost::numeric::ublas::matrix<double>& matrix_,
+                 const boost::numeric::ublas::vector<double>& shift_,
                  MatrixBranch* parent_);
 
     static std::vector<std::unique_ptr<MatrixBranch> > stock;
@@ -19,6 +20,7 @@ class MatrixBranch
 
   private:
     boost::numeric::ublas::matrix<double> my_matrix;
+    boost::numeric::ublas::vector<double> shift;
     MatrixBranch* parent;
     double volume;
 };

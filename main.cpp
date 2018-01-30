@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
     tf.grow(20);
     tf.harverst_cycle(14);
   }
-  sm.save(tf.generate_random(), "random.png", true);
+  sm.save(tf.generate_random(), "random.png", false);
   tf.show_trees();
   return 0;
 }

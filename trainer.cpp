@@ -344,9 +344,14 @@ int Trainer::get_vector_size() const {
 
 void Trainer::normalise_dataset() {
   using namespace boost::numeric::ublas;
+  vector<double> shift = (maximum + minimum) / 2;
   std::vector<vector<double> > basis;
-  std::vector<VectorEntry> data_copy = dataset;
+  std::vector<VectorEntry> data_copy;
   std::vector<double> inverse_dot_products;
+
+  for (auto it : dataset) {
+    data_copy.push_back(VectorEntry(it.vector - shift, it.is_true));
+  }
 
   for (int i = std::min(vector_size, int(dataset.size())); i; --i) {
 
@@ -395,7 +400,7 @@ void Trainer::normalise_dataset() {
   //std::cout << "Found Matrix: " << M << std::endl;
   std::cout << inverse << std::endl;
 
-  std::unique_ptr<MatrixBranch> new_branch(new MatrixBranch(M, matrix_branch));
+  std::unique_ptr<MatrixBranch> new_branch(new MatrixBranch(M, shift, matrix_branch));
   MatrixBranch::stock.push_back(std::move(new_branch));
   matrix_branch = (MatrixBranch::stock.end()-1)->get();
   vector_size = inverse_dot_products.size();

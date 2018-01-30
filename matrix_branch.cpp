@@ -6,8 +6,10 @@
 std::vector<std::unique_ptr<MatrixBranch> > MatrixBranch::stock;
 
 MatrixBranch::MatrixBranch(const boost::numeric::ublas::matrix<double>& matrix_,
+                           const boost::numeric::ublas::vector<double>& shift_,
                            MatrixBranch* parent_) :
   my_matrix(matrix_),
+  shift(shift_),
   parent(),
   volume(0)
 {
@@ -21,7 +23,7 @@ MatrixBranch::MatrixBranch(const boost::numeric::ublas::matrix<double>& matrix_,
 
 void MatrixBranch::transform(boost::numeric::ublas::vector<double>& vec) const {
   using namespace boost::numeric::ublas;
-  vec = prod(vec, my_matrix);
+  vec = prod(vec, my_matrix) + shift;
   if (parent) {
     parent->transform(vec);
   }

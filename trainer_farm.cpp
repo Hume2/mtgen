@@ -67,7 +67,7 @@ void TrainerFarm::harverst_one() {
 }
 
 void TrainerFarm::harverst_cycle(int depth_increase) {
-  show_trees();
+  //show_trees();
   int size1 = seeds.size();
   current_depth += depth_increase;
   for (int i = size1; i; --i) {
