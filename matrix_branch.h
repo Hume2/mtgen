@@ -3,6 +3,7 @@
 
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp>
+#include <memory>
 #include <vector>
 
 class MatrixBranch
@@ -11,7 +12,7 @@ class MatrixBranch
     MatrixBranch(const boost::numeric::ublas::matrix<double>& matrix_,
                  MatrixBranch* parent_);
 
-    static std::vector<MatrixBranch> stock;
+    static std::vector<std::unique_ptr<MatrixBranch> > stock;
 
     void transform(boost::numeric::ublas::vector<double>& vec) const;
     double get_volume() const;

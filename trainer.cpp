@@ -1,5 +1,6 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/matrix_vector.hpp>
+#include <boost/numeric/ublas/io.hpp>
 #include <limits>
 #include <stdio.h>
 #include <random>
@@ -11,7 +12,8 @@
 
 int Trainer::trainer_count = 0;
 
-Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_, MatrixBranch* matrix_branch_) :
+Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_,
+                 MatrixBranch* matrix_branch_) :
   ID(trainer_count),
   dataset(dataset_),
   vector_size(vector_size_),
@@ -25,8 +27,9 @@ Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_
   division(),
   positive(),
   negative(),
-  matrix_branch(matrix_branch_)
+  matrix_branch()
 {
+  matrix_branch = matrix_branch_;
   recalculate_minmax();
   std::cout << spaces() << "Trainer (depth " << depth << ") has dataset with "
             << dataset.size() << " vectors. V_log = " << get_volume() << std::endl;
@@ -54,12 +57,16 @@ double Trainer::get_volume() const {
   for (int i = vector_size-1; i >= 0; --i) {
     volume += log2(maximum[i] - minimum[i] + 1);
   }
+  if (matrix_branch) {
+    volume += matrix_branch->get_volume();
+  }
   return volume;
 }
 
 VectorEntry Trainer::generate_random() const {
   VectorEntry result(minimum, maximum);
   categorise(result);
+  matrix_branch->transform(result.vector);
   return result;
 }
 
@@ -180,8 +187,8 @@ void Trainer::calculate_division(bool delete_data) {
     }
   }
 
-  positive.reset(new Trainer(vector_size, positive_data, depth + 1));
-  negative.reset(new Trainer(vector_size, negative_data, depth + 1));
+  positive.reset(new Trainer(vector_size, positive_data, depth + 1, matrix_branch));
+  negative.reset(new Trainer(vector_size, negative_data, depth + 1, matrix_branch));
 
   if (delete_data) {
     dataset.clear();
@@ -341,7 +348,7 @@ void Trainer::normalise_dataset() {
   std::vector<VectorEntry> data_copy = dataset;
   std::vector<double> inverse_dot_products;
 
-  for (int i = std::max(vector_size, int(dataset.size())); i; --i) {
+  for (int i = std::min(vector_size, int(dataset.size())); i; --i) {
 
     double max_size = norm_2(data_copy.begin()->vector);
     auto max_it = data_copy.begin();
@@ -368,9 +375,9 @@ void Trainer::normalise_dataset() {
   }
 
   matrix<double> M(basis.size(), vector_size);
-  for (int i = 0; i < vector_size; ++i) {
-    for (int j = 0; j < basis.size(); ++j) {
-      M(i, j) = basis[j][i];
+  for (int i = 0; i < basis.size(); ++i) {
+    for (int j = 0; j < vector_size; ++j) {
+      M(i, j) = basis[i][j];
     }
   }
 
@@ -385,8 +392,12 @@ void Trainer::normalise_dataset() {
     it->vector = element_prod(prod(M, it->vector), inverse);
   }
 
-  MatrixBranch::stock.push_back(MatrixBranch(M, matrix_branch));
-  matrix_branch = &*(MatrixBranch::stock.end()-1);
+  //std::cout << "Found Matrix: " << M << std::endl;
+  std::cout << inverse << std::endl;
+
+  std::unique_ptr<MatrixBranch> new_branch(new MatrixBranch(M, matrix_branch));
+  MatrixBranch::stock.push_back(std::move(new_branch));
+  matrix_branch = (MatrixBranch::stock.end()-1)->get();
   vector_size = inverse_dot_products.size();
   recalculate_minmax();
 }
