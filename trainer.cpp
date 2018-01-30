@@ -1,3 +1,5 @@
+#include <boost/numeric/ublas/matrix.hpp>
+#include <boost/numeric/ublas/matrix_vector.hpp>
 #include <limits>
 #include <stdio.h>
 #include <random>
@@ -5,9 +7,11 @@
 
 #include "trainer.h"
 
+#include "matrix_branch.h"
+
 int Trainer::trainer_count = 0;
 
-Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_) :
+Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_, MatrixBranch* matrix_branch_) :
   ID(trainer_count),
   dataset(dataset_),
   vector_size(vector_size_),
@@ -20,22 +24,9 @@ Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_
   fake_count(0),
   division(),
   positive(),
-  negative()
+  negative(),
+  matrix_branch(matrix_branch_)
 {
-  /*double volume = 0;
-  for (int i = vector_size-1; i >= 0; --i) {
-    maximum[i] = std::numeric_limits<double>::min();
-    minimum[i] = std::numeric_limits<double>::max();
-    for (auto it : dataset) {
-      if (it.vector[i] > maximum[i]) {
-        maximum[i] = it.vector[i];
-      }
-      if (it.vector[i] < minimum[i]) {
-        minimum[i] = it.vector[i];
-      }
-    }
-    volume += log2(maximum[i] - minimum[i] + 1);
-  }*/
   recalculate_minmax();
   std::cout << spaces() << "Trainer (depth " << depth << ") has dataset with "
             << dataset.size() << " vectors. V_log = " << get_volume() << std::endl;
@@ -43,9 +34,10 @@ Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_
 }
 
 void Trainer::recalculate_minmax() {
+  using namespace boost::numeric::ublas;
+  maximum = scalar_vector<double>(vector_size, std::numeric_limits<double>::min());
+  minimum = scalar_vector<double>(vector_size, std::numeric_limits<double>::max());
   for (int i = vector_size-1; i >= 0; --i) {
-    maximum[i] = std::numeric_limits<double>::min();
-    minimum[i] = std::numeric_limits<double>::max();
     for (auto it : dataset) {
       if (it.vector[i] > maximum[i]) {
         maximum[i] = it.vector[i];
@@ -119,18 +111,6 @@ void Trainer::populate(int fakes) {
     VectorEntry fake(minimum, maximum);
     add_fake(fake);
   }
-  /*if (division && positive->true_count) {
-    int f1 = fakes * positive->true_count / true_count;
-    int f2 = fakes - f1;
-    positive->populate(f1);
-    negative->populate(f2);
-  } else {
-    for (int i = fakes; i; --i) {
-      //dataset.push_back(VectorEntry(minimum, maximum));
-      VectorEntry fake(minimum, maximum);
-      add_fake(fake);
-    }
-  }*/
 }
 
 void Trainer::calculate_centres() {
@@ -353,4 +333,60 @@ void Trainer::fill_leaf(std::vector<bool> history, int count) {
 
 int Trainer::get_vector_size() const {
   return vector_size;
+}
+
+void Trainer::normalise_dataset() {
+  using namespace boost::numeric::ublas;
+  std::vector<vector<double> > basis;
+  std::vector<VectorEntry> data_copy = dataset;
+  std::vector<double> inverse_dot_products;
+
+  for (int i = std::max(vector_size, int(dataset.size())); i; --i) {
+
+    double max_size = norm_2(data_copy.begin()->vector);
+    auto max_it = data_copy.begin();
+    for (auto it = data_copy.begin(); it != data_copy.end(); ++it) {
+      double size = norm_2(it->vector);
+      if (size > max_size) {
+        max_size = size;
+        max_it = it;
+      }
+    }
+
+    if (max_size <= 0) {
+      break;
+    }
+
+    basis.push_back(max_it->vector);
+    vector<double>* vec = &(max_it->vector);
+    double idp = 1/inner_prod(*vec, *vec);
+    inverse_dot_products.push_back(idp);
+
+    for (auto it = data_copy.begin(); it != data_copy.end(); ++it) {
+      it->vector = it->vector - (inner_prod(it->vector, *vec)*idp) * (*vec);
+    }
+  }
+
+  matrix<double> M(basis.size(), vector_size);
+  for (int i = 0; i < vector_size; ++i) {
+    for (int j = 0; j < basis.size(); ++j) {
+      M(i, j) = basis[j][i];
+    }
+  }
+
+  vector<double> inverse(inverse_dot_products.size());
+  int i = 0;
+  for (auto it = inverse_dot_products.begin(); it != inverse_dot_products.end(); ++it) {
+    inverse[i] = *it;
+    ++i;
+  }
+
+  for (auto it = dataset.begin(); it != dataset.end(); ++it) {
+    it->vector = element_prod(prod(M, it->vector), inverse);
+  }
+
+  MatrixBranch::stock.push_back(MatrixBranch(M, matrix_branch));
+  matrix_branch = &*(MatrixBranch::stock.end()-1);
+  vector_size = inverse_dot_products.size();
+  recalculate_minmax();
 }

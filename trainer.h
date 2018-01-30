@@ -10,10 +10,13 @@
 #include "division_plane.h"
 #include "vector_entry.h"
 
+class MatrixBranch;
+
 class Trainer
 {
   public:
-    Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_ = 0);
+    Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_ = 0,
+            MatrixBranch* matrix_branch_ = NULL);
 
     VectorEntry generate_random() const;
 
@@ -36,6 +39,8 @@ class Trainer
     std::vector<std::vector<bool> > get_leaves() const;
     std::unique_ptr<Trainer> cut_leaf(std::vector<bool> history);
     void fill_leaf(std::vector<bool> history, int count);
+
+    void normalise_dataset();
 
   protected:
     static int trainer_count;
@@ -69,6 +74,8 @@ class Trainer
     boost::optional<DivisionPlane> division;
     std::unique_ptr<Trainer> positive;
     std::unique_ptr<Trainer> negative;
+
+    MatrixBranch* matrix_branch;
 
     std::string spaces() const;
 };
