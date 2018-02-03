@@ -27,7 +27,7 @@ void MatrixBranch::transform(boost::numeric::ublas::vector<double>& vec) const {
   if (parent) {
     parent->transform(vec);
   }
-  std::cout << "Transformed vector size is: " << vec.size() << std::endl;
+  //std::cout << "Transformed vector size is: " << vec.size() << std::endl;
 }
 
 double MatrixBranch::get_volume() const {

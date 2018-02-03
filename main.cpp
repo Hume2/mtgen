@@ -20,13 +20,13 @@ int main(int argc, char** argv) {
   std::cout << arriva.size() << std::endl;
 
   TrainerFarm tf(std::unique_ptr<Trainer>(new Trainer(sm.get_vector_size()*4, arriva)));
-  //tf.grow(20);
-  //tf.harverst_cycle(14);
-  /*for (int i = 30; i; --i) {
+  tf.grow(20);
+  tf.harverst_cycle(14);
+  for (int i = 22; i; --i) {
     tf.grow(20);
     tf.harverst_cycle(14);
-  }*/
-  sm.save(tf.generate_random(), "random.png", true, true);
+  }
+  sm.save(tf.generate_random(), "random.png", true, false);
   tf.show_trees();
   return 0;
 }

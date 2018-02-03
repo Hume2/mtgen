@@ -398,7 +398,7 @@ void Trainer::normalise_dataset() {
   }
 
   //std::cout << "Found Matrix: " << M << std::endl;
-  std::cout << inverse << std::endl;
+  //std::cout << inverse << std::endl;
 
   std::unique_ptr<MatrixBranch> new_branch(new MatrixBranch(M, shift, matrix_branch));
   MatrixBranch::stock.push_back(std::move(new_branch));
