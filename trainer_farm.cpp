@@ -10,6 +10,7 @@ TrainerFarm::TrainerFarm(std::unique_ptr<Trainer> first_seed) :
   total_trues(first_seed->count_trues()),
   current_depth(10)
 {
+  std::cout << "TrainerFarm created" << std::endl;
   first_seed->normalise_dataset();
   seeds.push_back(std::move(first_seed));
 }

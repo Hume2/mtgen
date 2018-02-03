@@ -9,6 +9,7 @@
 #include "trainer.h"
 
 #include "matrix_branch.h"
+#include "progress.h"
 
 int Trainer::trainer_count = 0;
 
@@ -353,7 +354,10 @@ void Trainer::normalise_dataset() {
     data_copy.push_back(VectorEntry(it.vector - shift, it.is_true));
   }
 
-  for (int i = std::min(vector_size, int(dataset.size())); i; --i) {
+  int i_max = std::min(vector_size, int(dataset.size()));
+  Progress pr("Calculating transform matrix.", i_max, i_max > 50);
+
+  for (int i = i_max; i; --i) {
 
     double max_size = norm_2(data_copy.begin()->vector);
     auto max_it = data_copy.begin();
@@ -377,7 +381,9 @@ void Trainer::normalise_dataset() {
     for (auto it = data_copy.begin(); it != data_copy.end(); ++it) {
       it->vector = it->vector - (inner_prod(it->vector, *vec)*idp) * (*vec);
     }
+    pr.step_one();
   }
+  pr.done();
 
   matrix<double> M(basis.size(), vector_size);
   for (int i = 0; i < basis.size(); ++i) {
@@ -393,9 +399,12 @@ void Trainer::normalise_dataset() {
     ++i;
   }
 
+  Progress pr2("Transforming data.", dataset.size(), dataset.size() > 50);
   for (auto it = dataset.begin(); it != dataset.end(); ++it) {
     it->vector = element_prod(prod(M, it->vector), inverse);
+    pr2.step_one();
   }
+  pr2.done();
 
   //std::cout << "Found Matrix: " << M << std::endl;
   //std::cout << inverse << std::endl;
