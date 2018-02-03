@@ -16,17 +16,18 @@ int main(int argc, char** argv) {
   srandom(time(0));
   SkinManipulator sm;
   sm.save(sm.load("training/character_555.png", true, false), "test.png", true, false);
-  std::vector<VectorEntry> arriva = sm.load_all_skins("training", true, false);
+  std::vector<VectorEntry> arriva = sm.load_all_skins("training", false, false);
   std::cout << arriva.size() << std::endl;
 
   TrainerFarm tf(std::unique_ptr<Trainer>(new Trainer(sm.get_vector_size()*4, arriva)));
   tf.grow(20);
-  tf.harverst_cycle(14);
-  for (int i = 22; i; --i) {
-    tf.grow(20);
-    tf.harverst_cycle(14);
+  tf.harverst_cycle(14, true);
+  for (int i = 0; i < 10; ++i) {
+    std::cout << "Cycle " << i << "..." << std::endl;
+    tf.grow(150*(i+1));
+    tf.harverst_cycle(14, true);
   }
-  sm.save(tf.generate_random(), "random.png", true, false);
-  tf.show_trees();
+  sm.save(tf.generate_random(), "random.png", false, false);
+  //tf.show_trees();
   return 0;
 }

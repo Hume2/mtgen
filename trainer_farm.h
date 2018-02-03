@@ -14,12 +14,13 @@ class TrainerFarm
 
     void grow(int cycles);
     void populate(int coef);
-    void harverst_one();
-    void harverst_cycle(int depth_increase);
+    void harverst_one(bool normalise);
+    void harverst_cycle(int depth_increase, bool normalise);
 
     boost::numeric::ublas::vector<double> generate_random() const;
 
     void show_trees();
+    double get_max_volume();
 
   private:
     std::vector<std::unique_ptr<Trainer> > seeds;
