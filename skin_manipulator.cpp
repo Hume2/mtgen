@@ -48,6 +48,9 @@ VectorEntry SkinManipulator::load(std::string filename, bool integral, bool deco
           }
           ++i;
         } else {
+          if (i < 4736) {
+            image[y][x].alpha = 255;
+          }
           if (integral) {
             result[i] = image[y][x].red;
             result[i+1] = image[y][x].green;
@@ -111,6 +114,9 @@ void SkinManipulator::save(VectorEntry img, std::string filename, bool derivatio
             image[y][x].blue = previou.blue + img.vector[i+2];
             image[y][x].alpha = previou.alpha + img.vector[i+3];
             previou = image[y][x];
+          }
+          if (i < 4736) {
+            image[y][x].alpha = 255;
           }
           i += 4;
         }
