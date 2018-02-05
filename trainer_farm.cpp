@@ -16,14 +16,21 @@ TrainerFarm::TrainerFarm(std::unique_ptr<Trainer> first_seed) :
   seeds.push_back(std::move(first_seed));
 }
 
-void TrainerFarm::grow(int cycles) {
-  Progress pr("Applying growoth.", cycles, true);
+void TrainerFarm::grow(int cycles, int coef) {
+  Progress pr("Applying growth.", cycles, true);
+  int local_true;
   for (int i = cycles; i; --i) {
-    populate(2);
+    //populate(coef);
     for (auto& it : seeds) {
+      if (it->is_counted()) {
+        local_true = it->get_true_count();
+      } else {
+        local_true = it->count_trues();
+      }
+      it->populate(coef * local_true);
       it->subdivide(current_depth, true);
     }
-    current_depth += 3;
+    current_depth += log2(coef) * 3;
     pr.step_one();
   }
   pr.done();

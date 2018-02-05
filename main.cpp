@@ -22,10 +22,10 @@ int main(int argc, char** argv) {
   TrainerFarm tf(std::unique_ptr<Trainer>(new Trainer(sm.get_vector_size()*4, arriva)));
   tf.grow(20);
   tf.harverst_cycle(14, true);
-  for (int i = 0; i < 10; ++i) {
+  for (int i = 0; i < 1500; ++i) {
     std::cout << "Cycle " << i << "..." << std::endl;
-    tf.grow(150*(i+1));
-    tf.harverst_cycle(14, true);
+    tf.grow(10, 40);
+    tf.harverst_cycle(14, i == 50);
   }
   sm.save(tf.generate_random(), "random.png", false, false);
   //tf.show_trees();

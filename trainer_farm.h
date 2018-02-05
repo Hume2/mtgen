@@ -12,7 +12,7 @@ class TrainerFarm
   public:
     TrainerFarm(std::unique_ptr<Trainer> first_seed);
 
-    void grow(int cycles);
+    void grow(int cycles, int coef = 2);
     void populate(int coef);
     void harverst_one(bool normalise);
     void harverst_cycle(int depth_increase, bool normalise);
