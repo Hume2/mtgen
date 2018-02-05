@@ -116,7 +116,7 @@ void Trainer::add_fake(VectorEntry& vec) {
 
 void Trainer::populate(int fakes) {
   for (int i = fakes; i; --i) {
-    VectorEntry fake(minimum, maximum);
+    VectorEntry fake(minimum, maximum, VectorEntry::ORTOPLEX);
     add_fake(fake);
   }
 }

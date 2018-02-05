@@ -28,7 +28,10 @@ VectorEntry::VectorEntry(const boost::numeric::ublas::vector<double>& min,
       for (int i = vector.size()-1; i >= 0; --i) {
         vector[i] = (1 - pow((double)rand() / RAND_MAX, 1/(i+1)))*sum;
         sum -= vector[i];
-        vector[i] = (max[i] - min[i])*vector[i] + (max[i] + min[i])/2;
+        if (rand() % 2) {
+          vector[i] = -vector[i];
+        }
+        vector[i] = ((max[i] - min[i])*vector[i] + (max[i] + min[i]))/2;
       }
     } break;
   }
