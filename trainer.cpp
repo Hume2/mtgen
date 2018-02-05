@@ -65,7 +65,7 @@ double Trainer::get_volume() const {
 }
 
 VectorEntry Trainer::generate_random() const {
-  VectorEntry result(minimum, maximum);
+  VectorEntry result(minimum, maximum, VectorEntry::ORTOPLEX);
   categorise(result);
   matrix_branch->transform(result.vector);
   return result;
@@ -345,7 +345,7 @@ int Trainer::get_vector_size() const {
 
 void Trainer::normalise_dataset() {
   using namespace boost::numeric::ublas;
-  vector<double> shift = (maximum + minimum) / 2;
+  vector<double> shift = dataset.begin()->vector;//(maximum + minimum) / 2;
   std::vector<vector<double> > basis;
   std::vector<VectorEntry> data_copy;
   std::vector<double> inverse_dot_products;
@@ -354,7 +354,7 @@ void Trainer::normalise_dataset() {
     data_copy.push_back(VectorEntry(it.vector - shift, it.is_true));
   }
 
-  int i_max = std::min(vector_size, int(dataset.size()));
+  int i_max = std::min(vector_size, int(dataset.size()) - 1);
   Progress pr("Calculating transform matrix.", i_max, i_max > 50);
 
   for (int i = i_max; i; --i) {
@@ -401,7 +401,7 @@ void Trainer::normalise_dataset() {
 
   Progress pr2("Transforming data.", dataset.size(), dataset.size() > 50);
   for (auto it = dataset.begin(); it != dataset.end(); ++it) {
-    it->vector = element_prod(prod(M, it->vector), inverse);
+    it->vector = element_prod(prod(M, it->vector - shift), inverse);
     pr2.step_one();
   }
   pr2.done();
