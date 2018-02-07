@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "division_plane.h"
+#include "shape.h"
 #include "vector_entry.h"
 
 class MatrixBranch;
@@ -18,9 +19,9 @@ class Trainer
     Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_ = 0,
             MatrixBranch* matrix_branch_ = NULL);
 
-    VectorEntry generate_random() const;
+    VectorEntry generate_random(Shape shape = SHAPE_ORTOPLEX) const;
 
-    void populate(int fakes);
+    void populate(int fakes, Shape shape = SHAPE_ORTOPLEX);
     void subdivide(int max_depth, bool delete_data);
 
     int count_trues() const;
@@ -38,7 +39,7 @@ class Trainer
 
     std::vector<std::vector<bool> > get_leaves() const;
     std::unique_ptr<Trainer> cut_leaf(std::vector<bool> history);
-    void fill_leaf(std::vector<bool> history, int count);
+    void fill_leaf(std::vector<bool> history, int count, Shape shape = SHAPE_ORTOPLEX);
 
     void normalise_dataset();
 

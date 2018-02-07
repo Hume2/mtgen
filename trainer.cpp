@@ -10,7 +10,6 @@
 
 #include "matrix_branch.h"
 #include "progress.h"
-#include "shape.h"
 
 int Trainer::trainer_count = 0;
 
@@ -59,14 +58,14 @@ double Trainer::get_volume() const {
   for (int i = vector_size-1; i >= 0; --i) {
     volume += log2(maximum[i] - minimum[i] + 1);
   }
-  if (matrix_branch) {
+  /*if (matrix_branch) {
     volume += matrix_branch->get_volume();
-  }
+  }*/
   return volume;
 }
 
-VectorEntry Trainer::generate_random() const {
-  VectorEntry result(minimum, maximum, SHAPE_ORTOPLEX);
+VectorEntry Trainer::generate_random(Shape shape) const {
+  VectorEntry result(minimum, maximum, shape);
   categorise(result);
   matrix_branch->transform(result.vector);
   return result;
@@ -115,9 +114,9 @@ void Trainer::add_fake(VectorEntry& vec) {
   }
 }
 
-void Trainer::populate(int fakes) {
+void Trainer::populate(int fakes, Shape shape) {
   for (int i = fakes; i; --i) {
-    VectorEntry fake(minimum, maximum, SHAPE_ORTOPLEX);
+    VectorEntry fake(minimum, maximum, shape);
     add_fake(fake);
   }
 }
@@ -331,11 +330,11 @@ std::unique_ptr<Trainer> Trainer::cut_leaf(std::vector<bool> history) {
   return std::move(cut_leaf_recursive(history));
 }
 
-void Trainer::fill_leaf(std::vector<bool> history, int count) {
+void Trainer::fill_leaf(std::vector<bool> history, int count, Shape shape) {
   std::vector<bool> h_;
   for (int i = count; i; --i) {
     h_ = history;
-    VectorEntry fake(minimum, maximum);
+    VectorEntry fake(minimum, maximum, shape);
     fill_leaf_recursive(h_, fake);
   }
 }

@@ -16,7 +16,7 @@ TrainerFarm::TrainerFarm(std::unique_ptr<Trainer> first_seed) :
   seeds.push_back(std::move(first_seed));
 }
 
-void TrainerFarm::grow(int cycles, int coef) {
+void TrainerFarm::grow(int cycles, int coef, Shape shape) {
   Progress pr("Applying growth.", cycles, true);
   int local_true;
   for (int i = cycles; i; --i) {
@@ -27,7 +27,7 @@ void TrainerFarm::grow(int cycles, int coef) {
       } else {
         local_true = it->count_trues();
       }
-      it->populate(coef * local_true);
+      it->populate(coef * local_true, shape);
       it->subdivide(current_depth, true);
     }
     current_depth += log2(coef) * 3;
@@ -36,7 +36,7 @@ void TrainerFarm::grow(int cycles, int coef) {
   pr.done();
 }
 
-void TrainerFarm::populate(int coef) {
+void TrainerFarm::populate(int coef, Shape shape) {
   int local_true;
   for (auto& it : seeds) {
     if (it->is_counted()) {
@@ -44,19 +44,19 @@ void TrainerFarm::populate(int coef) {
     } else {
       local_true = it->count_trues();
     }
-    it->populate(coef * local_true);
+    it->populate(coef * local_true, shape);
   }
 }
 
-boost::numeric::ublas::vector<double> TrainerFarm::generate_random() const {
+boost::numeric::ublas::vector<double> TrainerFarm::generate_random(Shape shape) const {
   int n = ((int)rand()) % total_trues;
   for (auto& it : seeds) {
     n -= it->get_true_count();
     if (n < 0) {
-      return it->generate_random().vector;
+      return it->generate_random(shape).vector;
     }
   }
-  return seeds[0]->generate_random().vector;
+  return seeds[0]->generate_random(shape).vector;
 }
 
 void TrainerFarm::show_trees() {
@@ -65,10 +65,10 @@ void TrainerFarm::show_trees() {
   }
 }
 
-void TrainerFarm::harverst_one(bool normalise) {
+void TrainerFarm::harverst_one(bool normalise, Shape shape) {
   std::vector<std::vector<bool> > leaves = seeds[0]->get_leaves();
   for (auto it : leaves) {
-    seeds[0]->fill_leaf(it, /*seeds[0]->get_vector_size()*/ 30);
+    seeds[0]->fill_leaf(it, /*seeds[0]->get_vector_size()*/ 30, shape);
     seeds.push_back(std::move(seeds[0]->cut_leaf(it)));
     Trainer* tr = (*(seeds.end()-1)).get();
 
@@ -82,12 +82,12 @@ void TrainerFarm::harverst_one(bool normalise) {
   seeds.erase(seeds.begin());
 }
 
-void TrainerFarm::harverst_cycle(int depth_increase, bool normalise) {
+void TrainerFarm::harverst_cycle(int depth_increase, bool normalise, Shape shape) {
   //show_trees();
   int size1 = seeds.size();
   current_depth += depth_increase;
   for (int i = size1; i; --i) {
-    harverst_one(normalise);
+    harverst_one(normalise, shape);
   }
   std::cout << "Harversted trainer farm. " << size1 << "seeds -> " <<
                seeds.size() << "seeds (max. volume = " << get_max_volume() <<
