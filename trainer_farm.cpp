@@ -1,3 +1,4 @@
+#include <limits>
 #include <stdio.h>
 #include <random>
 
@@ -95,7 +96,7 @@ void TrainerFarm::harverst_cycle(int depth_increase, bool normalise, Shape shape
 }
 
 double TrainerFarm::get_max_volume() {
-  double result = 0;
+  double result = -std::numeric_limits<double>::max();
   for (auto& it : seeds) {
     result = std::max(result, it->get_volume());
   }

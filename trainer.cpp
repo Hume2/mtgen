@@ -39,7 +39,7 @@ Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_
 
 void Trainer::recalculate_minmax() {
   using namespace boost::numeric::ublas;
-  maximum = scalar_vector<double>(vector_size, std::numeric_limits<double>::min());
+  maximum = scalar_vector<double>(vector_size, -std::numeric_limits<double>::max());
   minimum = scalar_vector<double>(vector_size, std::numeric_limits<double>::max());
   for (int i = vector_size-1; i >= 0; --i) {
     for (auto it : dataset) {
@@ -56,7 +56,7 @@ void Trainer::recalculate_minmax() {
 double Trainer::get_volume() const {
   double volume = 0;
   for (int i = vector_size-1; i >= 0; --i) {
-    volume += log2(maximum[i] - minimum[i] + 1);
+    volume += log2(maximum[i] - minimum[i]);
   }
   /*if (matrix_branch) {
     volume += matrix_branch->get_volume();
