@@ -43,11 +43,11 @@ void Trainer::recalculate_minmax() {
   minimum = scalar_vector<double>(vector_size, std::numeric_limits<double>::max());
   for (int i = vector_size-1; i >= 0; --i) {
     for (auto it : dataset) {
-      if (it.vector[i] > maximum[i]) {
-        maximum[i] = it.vector[i];
+      if (it.vec[i] > maximum[i]) {
+        maximum[i] = it.vec[i];
       }
-      if (it.vector[i] < minimum[i]) {
-        minimum[i] = it.vector[i];
+      if (it.vec[i] < minimum[i]) {
+        minimum[i] = it.vec[i];
       }
     }
   }
@@ -67,7 +67,7 @@ double Trainer::get_volume() const {
 VectorEntry Trainer::generate_random(Shape shape) const {
   VectorEntry result(minimum, maximum, shape);
   categorise(result);
-  matrix_branch->transform(result.vector);
+  matrix_branch->transform(result.vec);
   return result;
 }
 
@@ -91,7 +91,7 @@ void Trainer::categorise(VectorEntry& vec) const {
   }
   bool part = get_random_half();
 
-  division->mirror(vec.vector, part);
+  division->mirror(vec.vec, part);
   if (part) {
     positive->categorise(vec);
   } else {
@@ -106,7 +106,7 @@ void Trainer::add_fake(VectorEntry& vec) {
   }
 
   bool part = get_random_half();
-  division->mirror(vec.vector, part);
+  division->mirror(vec.vec, part);
   if (part) {
     positive->add_fake(vec);
   } else {
@@ -131,10 +131,10 @@ void Trainer::calculate_centres() {
   for (auto it : dataset) {
     if (it.is_true) {
       true_count++;
-      true_centre += it.vector;
+      true_centre += it.vec;
     } else {
       fake_count++;
-      fake_centre += it.vector;
+      fake_centre += it.vec;
     }
   }
 
@@ -181,7 +181,7 @@ void Trainer::calculate_division(bool delete_data) {
   std::vector<VectorEntry> negative_data;
 
   for (auto it: dataset) {
-    if (division->rate(it.vector) > 0) {
+    if (division->rate(it.vec) > 0) {
       positive_data.push_back(it);
     } else {
       negative_data.push_back(it);
@@ -310,7 +310,7 @@ void Trainer::fill_leaf_recursive(std::vector<bool>& history, VectorEntry& fake)
   if (history.size() && division) {
     bool current = history[0];
     history.erase(history.begin());
-    division->mirror(fake.vector, current);
+    division->mirror(fake.vec, current);
     if (current) {
       positive->fill_leaf_recursive(history, fake);
     } else {
@@ -345,13 +345,13 @@ int Trainer::get_vector_size() const {
 
 void Trainer::normalise_dataset() {
   using namespace boost::numeric::ublas;
-  vector<double> shift = dataset.begin()->vector;//(maximum + minimum) / 2;
+  vector<double> shift = dataset.begin()->vec;//(maximum + minimum) / 2;
   std::vector<vector<double> > basis;
   std::vector<VectorEntry> data_copy;
   std::vector<double> inverse_dot_products;
 
   for (auto it : dataset) {
-    data_copy.push_back(VectorEntry(it.vector - shift, it.is_true));
+    data_copy.push_back(VectorEntry(it.vec - shift, it.is_true));
   }
 
   int i_max = std::min(vector_size, int(dataset.size()) - 1);
@@ -359,10 +359,10 @@ void Trainer::normalise_dataset() {
 
   for (int i = i_max; i; --i) {
 
-    double max_size = norm_2(data_copy.begin()->vector);
+    double max_size = norm_2(data_copy.begin()->vec);
     auto max_it = data_copy.begin();
     for (auto it = data_copy.begin(); it != data_copy.end(); ++it) {
-      double size = norm_2(it->vector);
+      double size = norm_2(it->vec);
       if (size > max_size) {
         max_size = size;
         max_it = it;
@@ -373,13 +373,13 @@ void Trainer::normalise_dataset() {
       break;
     }
 
-    basis.push_back(max_it->vector);
-    vector<double>* vec = &(max_it->vector);
+    basis.push_back(max_it->vec);
+    vector<double>* vec = &(max_it->vec);
     double idp = 1/inner_prod(*vec, *vec);
     inverse_dot_products.push_back(idp);
 
     for (auto it = data_copy.begin(); it != data_copy.end(); ++it) {
-      it->vector = it->vector - (inner_prod(it->vector, *vec)*idp) * (*vec);
+      it->vec = it->vec - (inner_prod(it->vec, *vec)*idp) * (*vec);
     }
     pr.step_one();
   }
@@ -401,7 +401,7 @@ void Trainer::normalise_dataset() {
 
   Progress pr2("Transforming data.", dataset.size(), dataset.size() > 50);
   for (auto it = dataset.begin(); it != dataset.end(); ++it) {
-    it->vector = element_prod(prod(M, it->vector - shift), inverse);
+    it->vec = element_prod(prod(M, it->vec - shift), inverse);
     pr2.step_one();
   }
   pr2.done();

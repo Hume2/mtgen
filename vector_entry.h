@@ -13,7 +13,7 @@ class VectorEntry
                 const boost::numeric::ublas::vector<double>& max,
                 Shape shape = SHAPE_CUBE, bool is_true_ = false);
 
-    boost::numeric::ublas::vector<double> vector;
+    boost::numeric::ublas::vector<double> vec;
     bool is_true;
 };
 

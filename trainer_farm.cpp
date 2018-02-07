@@ -53,10 +53,10 @@ boost::numeric::ublas::vector<double> TrainerFarm::generate_random(Shape shape) 
   for (auto& it : seeds) {
     n -= it->get_true_count();
     if (n < 0) {
-      return it->generate_random(shape).vector;
+      return it->generate_random(shape).vec;
     }
   }
-  return seeds[0]->generate_random(shape).vector;
+  return seeds[0]->generate_random(shape).vec;
 }
 
 void TrainerFarm::show_trees() {

@@ -85,9 +85,9 @@ void SkinManipulator::save(VectorEntry img, std::string filename, bool derivatio
       for (int x = it.x1; x < it.x2; ++x) {
         if (compose) {
           if (derivation) {
-            d = img.vector[i];// + 0x80E00000;
+            d = img.vec[i];// + 0x80E00000;
           } else {
-            d = img.vector[i] + previous;
+            d = img.vec[i] + previous;
           }
           if (d < 0) {
             u = 0;
@@ -104,15 +104,15 @@ void SkinManipulator::save(VectorEntry img, std::string filename, bool derivatio
           ++i;
         } else {
           if (derivation) {
-            image[y][x].red = img.vector[i];
-            image[y][x].green = img.vector[i+1];
-            image[y][x].blue = img.vector[i+2];
-            image[y][x].alpha = img.vector[i+3];
+            image[y][x].red = img.vec[i];
+            image[y][x].green = img.vec[i+1];
+            image[y][x].blue = img.vec[i+2];
+            image[y][x].alpha = img.vec[i+3];
           } else {
-            image[y][x].red = previou.red + img.vector[i];
-            image[y][x].green = previou.green + img.vector[i+1];
-            image[y][x].blue = previou.blue + img.vector[i+2];
-            image[y][x].alpha = previou.alpha + img.vector[i+3];
+            image[y][x].red = previou.red + img.vec[i];
+            image[y][x].green = previou.green + img.vec[i+1];
+            image[y][x].blue = previou.blue + img.vec[i+2];
+            image[y][x].alpha = previou.alpha + img.vec[i+3];
             previou = image[y][x];
           }
           if (i < 4736) {
