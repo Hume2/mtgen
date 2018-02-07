@@ -3,7 +3,7 @@
 
 enum Shape{
   SHAPE_CUBE,
-  SHAPE_ORTOPLEX
+  SHAPE_ORTHOPLEX
 };
 
 #endif // SHAPE

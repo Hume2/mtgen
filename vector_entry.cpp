@@ -23,7 +23,7 @@ VectorEntry::VectorEntry(const boost::numeric::ublas::vector<double>& min,
         vector[i] = (double)rand() / RAND_MAX * (max[i] - min[i]) + min[i];
       }
     } break;
-    case SHAPE_ORTOPLEX: {
+    case SHAPE_ORTHOPLEX: {
       double sum = 1;
       for (int i = vector.size()-1; i >= 0; --i) {
         vector[i] = (1 - pow((double)rand() / RAND_MAX, 1/(i+1)))*sum;
