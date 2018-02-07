@@ -3,15 +3,15 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
+#include "shape.h"
+
 class VectorEntry
 {
   public:
-    enum Shape{CUBE, ORTOPLEX};
-
     VectorEntry(boost::numeric::ublas::vector<double> vector_, bool is_true_ = true);
     VectorEntry(const boost::numeric::ublas::vector<double>& min,
                 const boost::numeric::ublas::vector<double>& max,
-                Shape shape = CUBE, bool is_true_ = false);
+                Shape shape = SHAPE_CUBE, bool is_true_ = false);
 
     boost::numeric::ublas::vector<double> vector;
     bool is_true;

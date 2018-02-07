@@ -10,6 +10,7 @@
 
 #include "matrix_branch.h"
 #include "progress.h"
+#include "shape.h"
 
 int Trainer::trainer_count = 0;
 
@@ -65,7 +66,7 @@ double Trainer::get_volume() const {
 }
 
 VectorEntry Trainer::generate_random() const {
-  VectorEntry result(minimum, maximum, VectorEntry::ORTOPLEX);
+  VectorEntry result(minimum, maximum, SHAPE_ORTOPLEX);
   categorise(result);
   matrix_branch->transform(result.vector);
   return result;
@@ -116,7 +117,7 @@ void Trainer::add_fake(VectorEntry& vec) {
 
 void Trainer::populate(int fakes) {
   for (int i = fakes; i; --i) {
-    VectorEntry fake(minimum, maximum, VectorEntry::ORTOPLEX);
+    VectorEntry fake(minimum, maximum, SHAPE_ORTOPLEX);
     add_fake(fake);
   }
 }

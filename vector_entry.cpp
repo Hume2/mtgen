@@ -18,12 +18,12 @@ VectorEntry::VectorEntry(const boost::numeric::ublas::vector<double>& min,
 {
   using namespace boost::numeric::ublas;
   switch (shape) {
-    case CUBE: {
+    case SHAPE_CUBE: {
       for (int i = vector.size()-1; i >= 0; --i) {
         vector[i] = (double)rand() / RAND_MAX * (max[i] - min[i]) + min[i];
       }
     } break;
-    case ORTOPLEX: {
+    case SHAPE_ORTOPLEX: {
       double sum = 1;
       for (int i = vector.size()-1; i >= 0; --i) {
         vector[i] = (1 - pow((double)rand() / RAND_MAX, 1/(i+1)))*sum;
