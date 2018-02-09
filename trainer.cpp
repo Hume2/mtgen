@@ -58,9 +58,9 @@ double Trainer::get_volume() const {
   for (int i = vector_size-1; i >= 0; --i) {
     volume += log2(maximum[i] - minimum[i]);
   }
-  /*if (matrix_branch) {
+  if (matrix_branch) {
     volume += matrix_branch->get_volume();
-  }*/
+  }
   return volume;
 }
 

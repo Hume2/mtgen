@@ -19,6 +19,7 @@ MatrixBranch::MatrixBranch(const boost::numeric::ublas::matrix<double>& matrix_,
     vector<double> v1(matrix_row<matrix<double> >(my_matrix, 1));
     volume += log2(norm_2(v1));
   }
+  volume *= my_matrix.size1() / my_matrix.size2();
 }
 
 void MatrixBranch::transform(boost::numeric::ublas::vector<double>& vec) const {
