@@ -177,6 +177,15 @@ void Trainer::conservate() {
 
 void Trainer::calculate_division(bool delete_data) {
   using namespace boost::numeric::ublas;
+
+  if (division) {
+    std::cout << "?" << std::flush;
+    return;
+  }
+  if (!dataset.size()) {
+    std::cout << "0" << std::flush;
+    return;
+  }
   calculate_centres();
 
   if (is_pure()) {
@@ -205,6 +214,10 @@ void Trainer::calculate_division(bool delete_data) {
 
   if (delete_data) {
     dataset.clear();
+  }
+
+  if (!negative->count_trues() && !positive->count_trues()) {
+    std::cout << "!" << std::flush;
   }
 }
 
