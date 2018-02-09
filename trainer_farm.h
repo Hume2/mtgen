@@ -14,12 +14,12 @@ class TrainerFarm
   public:
     TrainerFarm(std::unique_ptr<Trainer> first_seed);
 
-    void grow(int cycles, int coef = 2, Shape shape = SHAPE_ORTHOPLEX);
-    void populate(int coef, Shape shape = SHAPE_ORTHOPLEX);
-    void harverst_one(bool normalise, Shape shape = SHAPE_ORTHOPLEX);
-    void harverst_cycle(int depth_increase, bool normalise, Shape shape = SHAPE_ORTHOPLEX);
+    void grow(int cycles, int coef, Shape shape);
+    void populate(int coef, Shape shape);
+    void harverst_one(bool normalise, Shape shape);
+    void harverst_cycle(int depth_increase, bool normalise, Shape shape);
 
-    boost::numeric::ublas::vector<double> generate_random(Shape shape = SHAPE_ORTHOPLEX) const;
+    boost::numeric::ublas::vector<double> generate_random(Shape shape) const;
 
     void show_trees();
     double get_max_volume();

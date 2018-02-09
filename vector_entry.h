@@ -11,7 +11,7 @@ class VectorEntry
     VectorEntry(boost::numeric::ublas::vector<double> vector_, bool is_true_ = true);
     VectorEntry(const boost::numeric::ublas::vector<double>& min,
                 const boost::numeric::ublas::vector<double>& max,
-                Shape shape = SHAPE_CUBE, bool is_true_ = false);
+                Shape shape, bool is_true_ = false);
 
     boost::numeric::ublas::vector<double> vec;
     bool is_true;
