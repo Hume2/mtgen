@@ -79,6 +79,7 @@ class Trainer
     MatrixBranch* matrix_branch;
 
     std::string spaces() const;
+    void conservate();
 };
 
 #endif // TRAINER_H

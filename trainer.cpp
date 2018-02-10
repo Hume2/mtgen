@@ -163,6 +163,18 @@ bool Trainer::is_counted() const {
   return true_count || fake_count || division;
 }
 
+void Trainer::conservate() {
+  true_count = 0;
+  fake_count = 0;
+  for (auto it : dataset) {
+    if (it.is_true) {
+      true_count++;
+    } else {
+      fake_count++;
+    }
+  }
+}
+
 void Trainer::calculate_division(bool delete_data) {
   using namespace boost::numeric::ublas;
   calculate_centres();
@@ -199,6 +211,7 @@ void Trainer::calculate_division(bool delete_data) {
 void Trainer::subdivide(int max_depth, bool delete_data) {
   if (depth >= max_depth) {
     //std::cout << spaces() << "Maximum depth exceeded." << std::endl;
+    conservate();
     return;
   }
 
