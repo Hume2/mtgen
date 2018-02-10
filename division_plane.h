@@ -14,7 +14,7 @@ class DivisionPlane
 
   private:
     boost::numeric::ublas::vector<double> point;
-    boost::numeric::ublas::vector<double> vector;
+    boost::numeric::ublas::vector<double> normal;
 
     boost::numeric::ublas::vector<double> mirror_precalc;
 };
