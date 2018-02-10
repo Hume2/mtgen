@@ -226,15 +226,8 @@ void Trainer::subdivide(int max_depth, bool delete_data) {
       return;
     }
 
-    positive->calculate_division(delete_data);
-    negative->calculate_division(delete_data);
-
-    if (!positive->is_pure()) {
-      positive->subdivide(max_depth, delete_data);
-    }
-    if (!negative->is_pure()) {
-      negative->subdivide(max_depth, delete_data);
-    }
+    positive->subdivide(max_depth, delete_data);
+    negative->subdivide(max_depth, delete_data);
 
   } else {
 
