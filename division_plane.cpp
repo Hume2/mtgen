@@ -8,6 +8,9 @@ DivisionPlane::DivisionPlane(boost::numeric::ublas::vector<double> point_,
 {
   using namespace boost::numeric::ublas;
   mirror_precalc = (-2 / inner_prod(normal, normal)) * normal;
+  if (norm_2(normal) < 1E-17) {
+    std::cout << "~" << std::flush;
+  }
 }
 
 double DivisionPlane::rate(const boost::numeric::ublas::vector<double>& vec) const {
