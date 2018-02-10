@@ -14,8 +14,8 @@ class SkinManipulator
   public:
     SkinManipulator(std::string rectlist_filename = "skin_rectlist.txt");
 
-    const int WIDTH = 64;
-    const int HEIGHT = 32;
+    const unsigned int WIDTH = 64;
+    const unsigned int HEIGHT = 32;
 
     VectorEntry load(std::string filename, bool integral, bool decompose);
     void save(VectorEntry img, std::string filename, bool derivation, bool compose);

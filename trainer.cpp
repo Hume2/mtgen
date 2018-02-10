@@ -392,7 +392,7 @@ void Trainer::normalise_dataset() {
   pr.done();
 
   matrix<double> M(basis.size(), vector_size);
-  for (int i = 0; i < basis.size(); ++i) {
+  for (unsigned int i = 0; i < basis.size(); ++i) {
     for (int j = 0; j < vector_size; ++j) {
       M(i, j) = basis[i][j];
     }

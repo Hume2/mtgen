@@ -3,7 +3,7 @@ OBJECTS = $(SOURCES:.cpp=.o)
 DEPS = $(SOURCES:%.cpp=%.d)
 TARGET = mtgen
 
-CFLAGS = -std=gnu++14 -O2 `libpng-config --cflags`
+CFLAGS = -std=gnu++14 -O2 -Wall `libpng-config --cflags`
 LFLAGS = -lm -O2 `libpng-config --ldflags` -lboost_system -lboost_filesystem
 
 all: $(TARGET)
