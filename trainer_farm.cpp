@@ -31,7 +31,7 @@ void TrainerFarm::grow(int cycles, int coef, Shape shape) {
       it->populate(coef * local_true, shape);
       it->subdivide(current_depth, true);
     }
-    current_depth += 1;//log2(coef) * 3;
+    current_depth += log2(coef) * 3;
     pr.step_one();
   }
   pr.done();
@@ -89,7 +89,7 @@ void TrainerFarm::harverst_one(bool normalise, Shape shape) {
 void TrainerFarm::harverst_cycle(int depth_increase, bool normalise, Shape shape) {
   //show_trees();
   int size1 = seeds.size();
-  current_depth += 1;//depth_increase;
+  current_depth += depth_increase;
   for (int i = size1; i; --i) {
     harverst_one(normalise, shape);
   }
