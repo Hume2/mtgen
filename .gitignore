@@ -3,6 +3,7 @@ mtgen.*
 *.o
 *.d
 training/*.png
+matrix_test/*.png
 test.png
 random.png
 output.txt

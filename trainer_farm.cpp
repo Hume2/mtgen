@@ -6,6 +6,7 @@
 
 #include "trainer.h"
 #include "progress.h"
+#include "skin_manipulator.h"
 
 TrainerFarm::TrainerFarm(std::unique_ptr<Trainer> first_seed) :
   seeds(),
@@ -101,4 +102,10 @@ double TrainerFarm::get_max_volume() {
     result = std::max(result, it->get_volume());
   }
   return result;
+}
+
+void TrainerFarm::save_as_skins(SkinManipulator *sm) {
+  for (auto& it : seeds) {
+    it->save_as_skins(sm);
+  }
 }

@@ -7,6 +7,7 @@
 
 #include "shape.h"
 
+class SkinManipulator;
 class Trainer;
 
 class TrainerFarm
@@ -23,6 +24,8 @@ class TrainerFarm
 
     void show_trees();
     double get_max_volume();
+
+    void save_as_skins(SkinManipulator* sm);
 
   private:
     std::vector<std::unique_ptr<Trainer> > seeds;

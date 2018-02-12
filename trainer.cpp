@@ -10,6 +10,7 @@
 
 #include "matrix_branch.h"
 #include "progress.h"
+#include "skin_manipulator.h"
 
 int Trainer::trainer_count = 0;
 
@@ -420,4 +421,16 @@ void Trainer::normalise_dataset() {
   matrix_branch = (MatrixBranch::stock.end()-1)->get();
   vector_size = inverse_dot_products.size();
   recalculate_minmax();
+}
+
+void Trainer::save_as_skins(SkinManipulator* sm) {
+  using namespace boost::numeric::ublas;
+  int i = 0;
+  for (auto it : dataset) {
+    vector<double> test = it.vec;
+    matrix_branch->transform(test);
+    sm->save(test, "matrix_test/"+std::to_string(ID)+"_"+std::to_string(i)+".png",
+             false, false);
+    ++i;
+  }
 }

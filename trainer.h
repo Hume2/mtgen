@@ -12,6 +12,7 @@
 #include "vector_entry.h"
 
 class MatrixBranch;
+class SkinManipulator;
 
 class Trainer
 {
@@ -42,6 +43,8 @@ class Trainer
     void fill_leaf(std::vector<bool> history, int count, Shape shape);
 
     void normalise_dataset();
+
+    void save_as_skins(SkinManipulator* sm);
 
   protected:
     static int trainer_count;
