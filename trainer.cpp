@@ -381,12 +381,12 @@ void Trainer::normalise_dataset() {
     }
 
     basis.push_back(max_it->vec);
-    vector<double>* vec = &(max_it->vec);
-    double idp = 1/inner_prod(*vec, *vec);
+    vector<double> vec = max_it->vec;
+    double idp = 1/inner_prod(vec, vec);
     inverse_dot_products.push_back(idp);
 
     for (auto it = data_copy.begin(); it != data_copy.end(); ++it) {
-      it->vec = it->vec - (inner_prod(it->vec, *vec)*idp) * (*vec);
+      it->vec = it->vec - (inner_prod(it->vec, vec)*idp) * vec;
     }
     pr.step_one();
   }
