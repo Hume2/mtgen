@@ -17,18 +17,19 @@ int main(int argc, char** argv) {
   srandom(time(0));
   SkinManipulator sm;
   sm.save(sm.load("training/character_555.png", true, false), "test.png", true, false);
-  std::vector<VectorEntry> arriva = sm.load_all_skins("training", false, false);
+  std::vector<VectorEntry> arriva = sm.load_all_skins("training", true, false);
   std::cout << arriva.size() << std::endl;
 
   TrainerFarm tf(std::unique_ptr<Trainer>(new Trainer(sm.get_vector_size()*4, arriva)));
-  tf.grow(20, 2, SHAPE_ORTHOPLEX);
+  //tf.force_normalise();
+  tf.grow(10, 2, SHAPE_CUBE);
   tf.harverst_cycle(14, true, SHAPE_CUBE);
-  for (int i = 1; i < 200; ++i) {
+  for (int i = 1; i < 30; ++i) {
     std::cout << "Cycle " << i << "..." << std::endl;
     tf.grow(2, 40, SHAPE_ORTHOPLEX);
     tf.harverst_cycle(14, i == 50, SHAPE_ORTHOPLEX);
   }
-  sm.save(tf.generate_random(SHAPE_ORTHOPLEX), "random.png", false, false);
+  sm.save(tf.generate_random(SHAPE_ORTHOPLEX), "random.png", true, false);
   //tf.show_trees();
   return 0;
 }

@@ -13,7 +13,7 @@ TrainerFarm::TrainerFarm(std::unique_ptr<Trainer> first_seed) :
   current_depth(10)
 {
   std::cout << "TrainerFarm created" << std::endl;
-  first_seed->normalise_dataset();
+  //first_seed->normalise_dataset();
   seeds.push_back(std::move(first_seed));
 }
 
@@ -101,4 +101,10 @@ double TrainerFarm::get_max_volume() {
     result = std::max(result, it->get_volume());
   }
   return result;
+}
+
+void TrainerFarm::force_normalise() {
+  for (auto& it : seeds) {
+    it->normalise_dataset();
+  }
 }

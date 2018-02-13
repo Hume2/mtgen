@@ -18,6 +18,7 @@ class TrainerFarm
     void populate(int coef, Shape shape);
     void harverst_one(bool normalise, Shape shape);
     void harverst_cycle(int depth_increase, bool normalise, Shape shape);
+    void force_normalise();
 
     boost::numeric::ublas::vector<double> generate_random(Shape shape) const;
 
