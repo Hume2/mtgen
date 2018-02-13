@@ -355,7 +355,7 @@ void Trainer::normalise_dataset() {
   vector<double> shift = dataset.begin()->vec;//(maximum + minimum) / 2;
   std::vector<vector<double> > basis;
   std::vector<VectorEntry> data_copy;
-  std::vector<double> inverse_dot_products;
+  //std::vector<double> inverse_dot_products;
 
   for (auto it : dataset) {
     data_copy.push_back(VectorEntry(it.vec - shift, it.is_true));
@@ -380,13 +380,15 @@ void Trainer::normalise_dataset() {
       break;
     }
 
-    basis.push_back(max_it->vec);
     vector<double> vec = max_it->vec;
-    double idp = 1/inner_prod(vec, vec);
-    inverse_dot_products.push_back(idp);
+    vec /= norm_2(vec);
+    basis.push_back(vec);
+    //double idp = 1/inner_prod(vec, vec);
+    //inverse_dot_products.push_back(idp);
 
     for (auto it = data_copy.begin(); it != data_copy.end(); ++it) {
-      it->vec = it->vec - (inner_prod(it->vec, vec)*idp) * vec;
+      //it->vec = it->vec - (inner_prod(it->vec, vec)*idp) * vec;
+      it->vec = it->vec - inner_prod(it->vec, vec) * vec;
     }
     pr.step_one();
   }
@@ -399,16 +401,17 @@ void Trainer::normalise_dataset() {
     }
   }
 
-  vector<double> inverse(inverse_dot_products.size());
+  /*vector<double> inverse(inverse_dot_products.size());
   int i = 0;
   for (auto it = inverse_dot_products.begin(); it != inverse_dot_products.end(); ++it) {
     inverse[i] = *it;
     ++i;
-  }
+  }*/
 
   Progress pr2("Transforming data.", dataset.size(), dataset.size() > 50);
   for (auto it = dataset.begin(); it != dataset.end(); ++it) {
-    it->vec = element_prod(prod(M, it->vec - shift), inverse);
+    //it->vec = element_prod(prod(M, it->vec - shift), inverse);
+    it->vec = prod(M, it->vec - shift);
     pr2.step_one();
   }
   pr2.done();
@@ -419,7 +422,7 @@ void Trainer::normalise_dataset() {
   std::unique_ptr<MatrixBranch> new_branch(new MatrixBranch(M, shift, matrix_branch));
   MatrixBranch::stock.push_back(std::move(new_branch));
   matrix_branch = (MatrixBranch::stock.end()-1)->get();
-  vector_size = inverse_dot_products.size();
+  vector_size = basis.size();
   recalculate_minmax();
 }
 
