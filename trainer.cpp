@@ -400,10 +400,13 @@ void Trainer::normalise_dataset() {
   }
 
   vector<double> inverse(inverse_dot_products.size());
-  int i = 0;
+  /*int i = 0;
   for (auto it = inverse_dot_products.begin(); it != inverse_dot_products.end(); ++it) {
     inverse[i] = *it;
     ++i;
+  }*/
+  for (unsigned int i = 0; i < inverse_dot_products.size(); ++i) {
+    inverse[i] = inverse_dot_products[i];
   }
 
   Progress pr2("Transforming data.", dataset.size(), dataset.size() > 50);
@@ -429,8 +432,9 @@ void Trainer::save_as_skins(SkinManipulator* sm) {
   for (auto it : dataset) {
     vector<double> test = it.vec;
     matrix_branch->transform(test);
-    sm->save(test, "matrix_test/"+std::to_string(ID)+"_"+std::to_string(i)+".png",
-             false, false);
+    std::cout << test << std::endl;
+    //sm->save(test, "matrix_test/"+std::to_string(ID)+"_"+std::to_string(i)+".png",
+    //         false, false);
     ++i;
   }
 }
