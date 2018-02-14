@@ -12,7 +12,8 @@ class VectorLoader
     VectorLoader();
     ~VectorLoader();
 
-    virtual void load_from(std::string directory, std::vector<VectorEntry>& dataset) = 0;
+    virtual void load_vectors(std::vector<VectorEntry>& dataset) = 0;
+    virtual int get_vector_size() const = 0;
 };
 
 #endif // VECTORLOADER_H
