@@ -6,13 +6,15 @@
 #include <list>
 
 #include "rect.h"
+#include "vector_loader.h"
 
 class VectorEntry;
 
-class SkinManipulator
+class SkinManipulator : public VectorLoader
 {
   public:
-    SkinManipulator(bool integral_, bool decompose_, std::string rectlist_filename = "skin_rectlist.txt");
+    SkinManipulator(bool integral_, bool decompose_, std::string dirname_,
+                    std::string rectlist_filename = "skin_rectlist.txt");
 
     const unsigned int WIDTH = 64;
     const unsigned int HEIGHT = 32;
@@ -20,9 +22,10 @@ class SkinManipulator
     VectorEntry load(std::string filename);
     void save(VectorEntry img, std::string filename);
 
-    std::vector<VectorEntry> load_all_skins(std::string dirname);
+    std::vector<VectorEntry> load_all_skins();
 
-    int get_vector_size() const;
+    virtual void load_vectors(std::vector<VectorEntry>& dataset);
+    virtual int get_vector_size() const;
 
   private:
     std::vector<Rect> rectlist;
@@ -30,6 +33,7 @@ class SkinManipulator
 
     bool integral;
     bool decompose;
+    std::string dirname;
 };
 
 #endif // SKINMANIPULATOR_H

@@ -8,11 +8,13 @@
 #include "pixel_tools.h"
 #include "vector_entry.h"
 
-SkinManipulator::SkinManipulator(bool integral_, bool decompose_, std::string rectlist_filename):
+SkinManipulator::SkinManipulator(bool integral_, bool decompose_, std::string dirname_,
+                                 std::string rectlist_filename):
   rectlist(load_rects(rectlist_filename)),
   vector_size(0),
   integral(integral_),
-  decompose(decompose_)
+  decompose(decompose_),
+  dirname(dirname_)
 {
   for (auto it : rectlist) {
     vector_size += it.surface();
@@ -132,7 +134,7 @@ void SkinManipulator::save(VectorEntry img, std::string filename) {
   image.write(filename.c_str());
 }
 
-std::vector<VectorEntry> SkinManipulator::load_all_skins(std::string dirname) {
+std::vector<VectorEntry> SkinManipulator::load_all_skins() {
   using namespace boost::numeric::ublas;
   using namespace boost::filesystem;
   std::vector<VectorEntry> result;
@@ -151,6 +153,24 @@ std::vector<VectorEntry> SkinManipulator::load_all_skins(std::string dirname) {
   }
 
   return result;
+}
+
+void SkinManipulator::load_vectors(std::vector<VectorEntry> &dataset) {
+  using namespace boost::numeric::ublas;
+  using namespace boost::filesystem;
+
+  std::vector<directory_entry> v;
+  if(is_directory(dirname.c_str())) {
+    copy(directory_iterator(dirname.c_str()), directory_iterator(), back_inserter(v));
+
+    for ( std::vector<directory_entry>::const_iterator it = v.begin(); it != v.end();  ++ it )
+    {
+      if (std::string((*it).path().extension().string()) == ".png") {
+        dataset.push_back(load((*it).path().string()));
+        //std::cout << result.size() << std::endl;
+      }
+    }
+  }
 }
 
 int SkinManipulator::get_vector_size() const {
