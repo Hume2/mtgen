@@ -12,21 +12,24 @@ class VectorEntry;
 class SkinManipulator
 {
   public:
-    SkinManipulator(std::string rectlist_filename = "skin_rectlist.txt");
+    SkinManipulator(bool integral_, bool decompose_, std::string rectlist_filename = "skin_rectlist.txt");
 
     const unsigned int WIDTH = 64;
     const unsigned int HEIGHT = 32;
 
-    VectorEntry load(std::string filename, bool integral, bool decompose);
-    void save(VectorEntry img, std::string filename, bool derivation, bool compose);
+    VectorEntry load(std::string filename);
+    void save(VectorEntry img, std::string filename);
 
-    std::vector<VectorEntry> load_all_skins(std::string dirname, bool integral = false, bool decompose = true);
+    std::vector<VectorEntry> load_all_skins(std::string dirname);
 
     int get_vector_size() const;
 
   private:
     std::vector<Rect> rectlist;
     int vector_size;
+
+    bool integral;
+    bool decompose;
 };
 
 #endif // SKINMANIPULATOR_H

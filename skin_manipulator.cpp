@@ -8,17 +8,22 @@
 #include "pixel_tools.h"
 #include "vector_entry.h"
 
-SkinManipulator::SkinManipulator(std::string rectlist_filename):
+SkinManipulator::SkinManipulator(bool integral_, bool decompose_, std::string rectlist_filename):
   rectlist(load_rects(rectlist_filename)),
-  vector_size(0)
+  vector_size(0),
+  integral(integral_),
+  decompose(decompose_)
 {
   for (auto it : rectlist) {
     vector_size += it.surface();
   }
+  if (!decompose) {
+    vector_size *= 4;
+  }
   std::cout << "Skin vector dimension is " << vector_size << ".\n";
 }
 
-VectorEntry SkinManipulator::load(std::string filename, bool integral, bool decompose) {
+VectorEntry SkinManipulator::load(std::string filename) {
   using namespace boost::numeric::ublas;
   png::image<png::rgba_pixel> image(filename.c_str());
   if (image.get_width() < WIDTH || image.get_height() < HEIGHT) {
@@ -26,7 +31,7 @@ VectorEntry SkinManipulator::load(std::string filename, bool integral, bool deco
     return VectorEntry(zero_vector<double>(vector_size));
   }
 
-  vector<double> result(decompose ? vector_size : (vector_size*4));
+  vector<double> result(vector_size);
   int i = 0;
   double d;
   double previous = 0;
@@ -72,7 +77,7 @@ VectorEntry SkinManipulator::load(std::string filename, bool integral, bool deco
   return VectorEntry(result);
 }
 
-void SkinManipulator::save(VectorEntry img, std::string filename, bool derivation, bool compose) {
+void SkinManipulator::save(VectorEntry img, std::string filename) {
   png::image<png::rgba_pixel> image(WIDTH, HEIGHT);
 
   int i = 0;
@@ -83,8 +88,8 @@ void SkinManipulator::save(VectorEntry img, std::string filename, bool derivatio
   for (auto it : rectlist) {
     for (int y = it.y1; y < it.y2; ++y) {
       for (int x = it.x1; x < it.x2; ++x) {
-        if (compose) {
-          if (derivation) {
+        if (decompose) {
+          if (integral) {
             d = img.vec[i];// + 0x80E00000;
           } else {
             d = img.vec[i] + previous;
@@ -103,7 +108,7 @@ void SkinManipulator::save(VectorEntry img, std::string filename, bool derivatio
           previous = d;
           ++i;
         } else {
-          if (derivation) {
+          if (integral) {
             image[y][x].red = img.vec[i];
             image[y][x].green = img.vec[i+1];
             image[y][x].blue = img.vec[i+2];
@@ -127,7 +132,7 @@ void SkinManipulator::save(VectorEntry img, std::string filename, bool derivatio
   image.write(filename.c_str());
 }
 
-std::vector<VectorEntry> SkinManipulator::load_all_skins(std::string dirname, bool integral, bool decompose) {
+std::vector<VectorEntry> SkinManipulator::load_all_skins(std::string dirname) {
   using namespace boost::numeric::ublas;
   using namespace boost::filesystem;
   std::vector<VectorEntry> result;
@@ -139,7 +144,7 @@ std::vector<VectorEntry> SkinManipulator::load_all_skins(std::string dirname, bo
     for ( std::vector<directory_entry>::const_iterator it = v.begin(); it != v.end();  ++ it )
     {
       if (std::string((*it).path().extension().string()) == ".png") {
-        result.push_back(load((*it).path().string(), integral, decompose));
+        result.push_back(load((*it).path().string()));
         //std::cout << result.size() << std::endl;
       }
     }
