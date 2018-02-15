@@ -10,6 +10,7 @@
 
 #include "matrix_branch.h"
 #include "progress.h"
+#include "vector_loader.h"
 
 int Trainer::trainer_count = 0;
 
@@ -34,6 +35,28 @@ Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_
   recalculate_minmax();
   //std::cout << spaces() << "Trainer (depth " << depth << ") has dataset with "
   //          << dataset.size() << " vectors. V_log = " << get_volume() << std::endl;
+  trainer_count++;
+}
+
+Trainer::Trainer(VectorLoader* loader) :
+  ID(trainer_count),
+  dataset(),
+  vector_size(loader->get_vector_size()),
+  depth(0),
+  minimum(vector_size),
+  maximum(vector_size),
+  true_centre(vector_size),
+  fake_centre(vector_size),
+  true_count(0),
+  fake_count(0),
+  division(),
+  positive(),
+  negative(),
+  matrix_branch()
+{
+  loader->load_vectors(dataset);
+  matrix_branch = NULL;
+  recalculate_minmax();
   trainer_count++;
 }
 

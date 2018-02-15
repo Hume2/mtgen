@@ -12,12 +12,14 @@
 #include "vector_entry.h"
 
 class MatrixBranch;
+class VectorLoader;
 
 class Trainer
 {
   public:
     Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_ = 0,
             MatrixBranch* matrix_branch_ = NULL);
+    Trainer(VectorLoader* loader);
 
     VectorEntry generate_random(Shape shape) const;
 
