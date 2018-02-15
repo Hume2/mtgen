@@ -80,7 +80,7 @@ void TrainerFarm::harverst_one(bool normalise, Shape shape) {
     }
     tr->subdivide(current_depth, true);
   }
-  seeds.erase(seeds.begin());
+  seeds.pop_front();
 }
 
 void TrainerFarm::harverst_cycle(int depth_increase, bool normalise, Shape shape) {

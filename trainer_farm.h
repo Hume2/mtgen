@@ -2,6 +2,7 @@
 #define TRAINERFARM_H
 
 #include <boost/numeric/ublas/vector.hpp>
+#include <deque>
 #include <memory>
 #include <vector>
 
@@ -26,7 +27,7 @@ class TrainerFarm
     double get_max_volume();
 
   private:
-    std::vector<std::unique_ptr<Trainer> > seeds;
+    std::deque<std::unique_ptr<Trainer> > seeds;
     int total_trues;
     int current_depth;
 };
