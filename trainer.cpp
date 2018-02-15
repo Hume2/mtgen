@@ -16,8 +16,8 @@ int Trainer::trainer_count = 0;
 
 Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_,
                  MatrixBranch* matrix_branch_) :
-  ID(trainer_count),
   dataset(dataset_),
+  ID(trainer_count),
   vector_size(vector_size_),
   depth(depth_),
   minimum(vector_size),
@@ -39,8 +39,8 @@ Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_
 }
 
 Trainer::Trainer(VectorLoader* loader) :
-  ID(trainer_count),
   dataset(),
+  ID(trainer_count),
   vector_size(loader->get_vector_size()),
   depth(0),
   minimum(vector_size),
@@ -57,6 +57,26 @@ Trainer::Trainer(VectorLoader* loader) :
   loader->load_vectors(dataset);
   matrix_branch = NULL;
   recalculate_minmax();
+  trainer_count++;
+}
+
+Trainer::Trainer(int vector_size_, int depth_, MatrixBranch* matrix_branch_) :
+  dataset(),
+  ID(trainer_count),
+  vector_size(vector_size_),
+  depth(depth_),
+  minimum(vector_size),
+  maximum(vector_size),
+  true_centre(vector_size),
+  fake_centre(vector_size),
+  true_count(0),
+  fake_count(0),
+  division(),
+  positive(),
+  negative(),
+  matrix_branch()
+{
+  matrix_branch = matrix_branch_;
   trainer_count++;
 }
 
@@ -212,23 +232,23 @@ void Trainer::calculate_division(bool delete_data) {
   division.emplace(DivisionPlane((true_centre*true_count + fake_centre*fake_count)/(true_count + fake_count),
                                  true_centre - fake_centre));
 
-  std::vector<VectorEntry> positive_data;
-  std::vector<VectorEntry> negative_data;
+  positive.reset(new Trainer(vector_size, depth + 1, matrix_branch));
+  negative.reset(new Trainer(vector_size, depth + 1, matrix_branch));
 
-  for (auto it: dataset) {
-    if (division->rate(it.vec) > 0) {
-      positive_data.push_back(it);
+  while (dataset.size()) {
+    if (division->rate(dataset.rbegin()->vec) > 0) {
+      positive->dataset.push_back(*(dataset.rbegin()));
     } else {
-      negative_data.push_back(it);
+      negative->dataset.push_back(*(dataset.rbegin()));
+    }
+
+    if (delete_data) {
+      dataset.pop_back();
     }
   }
 
-  positive.reset(new Trainer(vector_size, positive_data, depth + 1, matrix_branch));
-  negative.reset(new Trainer(vector_size, negative_data, depth + 1, matrix_branch));
-
-  if (delete_data) {
-    dataset.clear();
-  }
+  positive->recalculate_minmax();
+  negative->recalculate_minmax();
 }
 
 void Trainer::subdivide(int max_depth, bool delete_data) {

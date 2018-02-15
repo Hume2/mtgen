@@ -47,7 +47,10 @@ class Trainer
     void normalise_dataset();
 
   protected:
+    Trainer(int vector_size_, int depth_, MatrixBranch* matrix_branch_);
     static int trainer_count;
+
+    std::vector<VectorEntry> dataset;
 
     void calculate_centres();
     void calculate_division(bool delete_data);
@@ -62,7 +65,6 @@ class Trainer
 
   private:
     int ID;
-    std::vector<VectorEntry> dataset;
     int vector_size;
     int depth;
 
