@@ -67,7 +67,7 @@ void TrainerFarm::show_trees() {
 }
 
 void TrainerFarm::harverst_one(bool normalise, Shape shape) {
-  std::vector<std::vector<bool> > leaves = seeds[0]->get_leaves();
+  std::vector<std::deque<bool> > leaves = seeds[0]->get_leaves();
   for (auto it : leaves) {
     seeds[0]->fill_leaf(it, /*seeds[0]->get_vector_size()*/ 30, shape);
     seeds.push_back(std::move(seeds[0]->cut_leaf(it)));

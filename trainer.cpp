@@ -292,24 +292,24 @@ int Trainer::count_trues() const {
   return result;
 }
 
-std::vector<std::vector<bool> > Trainer::get_leaves_recursive(std::vector<bool>& history) const {
+std::vector<std::deque<bool> > Trainer::get_leaves_recursive(std::deque<bool>& history) const {
   if (division) {
-    std::vector<std::vector<bool> > result;
+    std::vector<std::deque<bool> > result;
     if (positive && positive->get_true_count()) {
-      std::vector<bool> history2 = history;
+      std::deque<bool> history2 = history;
       history2.push_back(true);
-      std::vector<std::vector<bool> > r2 = positive->get_leaves_recursive(history2);
+      std::vector<std::deque<bool> > r2 = positive->get_leaves_recursive(history2);
       result.insert(result.end(), r2.begin(), r2.end());
     }
     if (negative && negative->get_true_count()) {
-      std::vector<bool> history2 = history;
+      std::deque<bool> history2 = history;
       history2.push_back(false);
-      std::vector<std::vector<bool> > r2 = negative->get_leaves_recursive(history2);
+      std::vector<std::deque<bool> > r2 = negative->get_leaves_recursive(history2);
       result.insert(result.end(), r2.begin(), r2.end());
     }
     return result;
   } else {
-    std::vector<std::vector<bool> > result;
+    std::vector<std::deque<bool> > result;
     if (true_count) {
       result.push_back(history);
     }
@@ -317,9 +317,9 @@ std::vector<std::vector<bool> > Trainer::get_leaves_recursive(std::vector<bool>&
   }
 }
 
-std::unique_ptr<Trainer> Trainer::cut_leaf_recursive(std::vector<bool>& history) {
+std::unique_ptr<Trainer> Trainer::cut_leaf_recursive(std::deque<bool>& history) {
   bool current = history[0];
-  history.erase(history.begin());
+  history.pop_front();
   if (history.size()) {
     if (current) {
       return std::move(positive->cut_leaf_recursive(history));
@@ -335,10 +335,10 @@ std::unique_ptr<Trainer> Trainer::cut_leaf_recursive(std::vector<bool>& history)
   }
 }
 
-void Trainer::fill_leaf_recursive(std::vector<bool>& history, VectorEntry& fake) {
+void Trainer::fill_leaf_recursive(std::deque<bool>& history, VectorEntry& fake) {
   if (history.size() && division) {
     bool current = history[0];
-    history.erase(history.begin());
+    history.pop_front();
     division->mirror(fake.vec, current);
     if (current) {
       positive->fill_leaf_recursive(history, fake);
@@ -350,17 +350,17 @@ void Trainer::fill_leaf_recursive(std::vector<bool>& history, VectorEntry& fake)
   }
 }
 
-std::vector<std::vector<bool> > Trainer::get_leaves() const {
-  std::vector<bool> temp;
+std::vector<std::deque<bool> > Trainer::get_leaves() const {
+  std::deque<bool> temp;
   return get_leaves_recursive(temp);
 }
 
-std::unique_ptr<Trainer> Trainer::cut_leaf(std::vector<bool> history) {
+std::unique_ptr<Trainer> Trainer::cut_leaf(std::deque<bool> history) {
   return std::move(cut_leaf_recursive(history));
 }
 
-void Trainer::fill_leaf(std::vector<bool> history, int count, Shape shape) {
-  std::vector<bool> h_;
+void Trainer::fill_leaf(std::deque<bool> history, int count, Shape shape) {
+  std::deque<bool> h_;
   for (int i = count; i; --i) {
     h_ = history;
     VectorEntry fake(minimum, maximum, shape);

@@ -4,6 +4,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <memory>
 #include <boost/optional/optional.hpp>
+#include <deque>
 #include <string>
 #include <vector>
 
@@ -39,9 +40,9 @@ class Trainer
     double get_volume() const;
     int get_vector_size() const;
 
-    std::vector<std::vector<bool> > get_leaves() const;
-    std::unique_ptr<Trainer> cut_leaf(std::vector<bool> history);
-    void fill_leaf(std::vector<bool> history, int count, Shape shape);
+    std::vector<std::deque<bool> > get_leaves() const;
+    std::unique_ptr<Trainer> cut_leaf(std::deque<bool> history);
+    void fill_leaf(std::deque<bool> history, int count, Shape shape);
 
     void normalise_dataset();
 
@@ -55,9 +56,9 @@ class Trainer
     void add_fake(VectorEntry& vec);
     void categorise(VectorEntry& vec) const;
 
-    std::vector<std::vector<bool> > get_leaves_recursive(std::vector<bool>& history) const;
-    std::unique_ptr<Trainer> cut_leaf_recursive(std::vector<bool>& history);
-    void fill_leaf_recursive(std::vector<bool>& history, VectorEntry& fake);
+    std::vector<std::deque<bool> > get_leaves_recursive(std::deque<bool>& history) const;
+    std::unique_ptr<Trainer> cut_leaf_recursive(std::deque<bool>& history);
+    void fill_leaf_recursive(std::deque<bool>& history, VectorEntry& fake);
 
   private:
     int ID;
