@@ -439,8 +439,8 @@ void Trainer::normalise_dataset() {
   //std::cout << inverse << std::endl;
 
   std::unique_ptr<MatrixBranch> new_branch(new MatrixBranch(M, shift, matrix_branch));
-  MatrixBranch::stock.push_back(std::move(new_branch));
-  matrix_branch = (MatrixBranch::stock.end()-1)->get();
+  MatrixBranch::stock.push_front(std::move(new_branch));
+  matrix_branch = MatrixBranch::stock.begin()->get();
   vector_size = inverse_dot_products.size();
   recalculate_minmax();
 }
