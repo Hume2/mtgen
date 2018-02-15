@@ -22,9 +22,9 @@ class SkinManipulator : public VectorLoader
     VectorEntry load(std::string filename);
     void save(VectorEntry img, std::string filename);
 
-    std::vector<VectorEntry> load_all_skins();
+    std::deque<VectorEntry> load_all_skins();
 
-    virtual void load_vectors(std::vector<VectorEntry>& dataset);
+    virtual void load_vectors(std::deque<VectorEntry>& dataset);
     virtual int get_vector_size() const;
 
   private:

@@ -18,7 +18,7 @@ class VectorLoader;
 class Trainer
 {
   public:
-    Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_ = 0,
+    Trainer(int vector_size_, std::deque<VectorEntry> dataset_, int depth_ = 0,
             MatrixBranch* matrix_branch_ = NULL);
     Trainer(VectorLoader* loader);
 
@@ -50,7 +50,7 @@ class Trainer
     Trainer(int vector_size_, int depth_, MatrixBranch* matrix_branch_);
     static int trainer_count;
 
-    std::vector<VectorEntry> dataset;
+    std::deque<VectorEntry> dataset;
 
     void calculate_centres();
     void calculate_division(bool delete_data);

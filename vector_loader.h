@@ -1,8 +1,8 @@
 #ifndef VECTORLOADER_H
 #define VECTORLOADER_H
 
+#include <deque>
 #include <string>
-#include <vector>
 
 #include "vector_entry.h"
 
@@ -12,7 +12,7 @@ class VectorLoader
     VectorLoader();
     ~VectorLoader();
 
-    virtual void load_vectors(std::vector<VectorEntry>& dataset) = 0;
+    virtual void load_vectors(std::deque<VectorEntry>& dataset) = 0;
     virtual int get_vector_size() const = 0;
 };
 

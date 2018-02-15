@@ -134,10 +134,10 @@ void SkinManipulator::save(VectorEntry img, std::string filename) {
   image.write(filename.c_str());
 }
 
-std::vector<VectorEntry> SkinManipulator::load_all_skins() {
+std::deque<VectorEntry> SkinManipulator::load_all_skins() {
   using namespace boost::numeric::ublas;
   using namespace boost::filesystem;
-  std::vector<VectorEntry> result;
+  std::deque<VectorEntry> result;
 
   std::vector<directory_entry> v;
   if(is_directory(dirname.c_str())) {
@@ -155,7 +155,7 @@ std::vector<VectorEntry> SkinManipulator::load_all_skins() {
   return result;
 }
 
-void SkinManipulator::load_vectors(std::vector<VectorEntry> &dataset) {
+void SkinManipulator::load_vectors(std::deque<VectorEntry>& dataset) {
   using namespace boost::numeric::ublas;
   using namespace boost::filesystem;
 

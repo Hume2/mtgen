@@ -14,7 +14,7 @@
 
 int Trainer::trainer_count = 0;
 
-Trainer::Trainer(int vector_size_, std::vector<VectorEntry> dataset_, int depth_,
+Trainer::Trainer(int vector_size_, std::deque<VectorEntry> dataset_, int depth_,
                  MatrixBranch* matrix_branch_) :
   dataset(dataset_),
   ID(trainer_count),
