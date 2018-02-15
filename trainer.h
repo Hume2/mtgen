@@ -54,6 +54,7 @@ class Trainer
 
     void calculate_centres();
     void calculate_division(bool delete_data);
+    void purify();
 
     bool get_random_half() const;
     void add_fake(VectorEntry& vec);

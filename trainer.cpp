@@ -218,6 +218,16 @@ void Trainer::conservate() {
   }
 }
 
+void Trainer::purify() {
+  for (int i = dataset.size()-1; i >= 0; --i) {
+    if (dataset[i].is_true) {
+      break;
+    } else {
+      dataset.pop_back();
+    }
+  }
+}
+
 void Trainer::calculate_division(bool delete_data) {
   using namespace boost::numeric::ublas;
   calculate_centres();
@@ -249,6 +259,13 @@ void Trainer::calculate_division(bool delete_data) {
 
   positive->recalculate_minmax();
   negative->recalculate_minmax();
+
+  if (!positive->dataset.size()) {
+    negative->purify();
+  }
+  if (!negative->dataset.size()) {
+    positive->purify();
+  }
 }
 
 void Trainer::subdivide(int max_depth, bool delete_data) {
