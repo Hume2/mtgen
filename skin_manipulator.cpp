@@ -8,9 +8,25 @@
 #include "pixel_tools.h"
 #include "vector_entry.h"
 
-SkinManipulator::SkinManipulator(bool integral_, bool decompose_, std::string dirname_,
-                                 std::string rectlist_filename):
-  rectlist(load_rects(rectlist_filename)),
+namespace {
+
+const int rectlist_size = 10;
+const Rect rectlist[rectlist_size] = {
+  {8, 0, 24, 8},
+  {0, 8, 32, 16},
+  {20, 16, 36, 20},
+  {16, 20, 40, 32},
+  {44, 16, 52, 20},
+  {40, 20, 56, 32},
+  {4, 16, 12, 20},
+  {0, 20, 16, 32},
+  {40, 0, 56, 8},
+  {32, 8, 64, 16}
+};
+
+}
+
+SkinManipulator::SkinManipulator(bool integral_, bool decompose_, std::string dirname_):
   vector_size(0),
   integral(integral_),
   decompose(decompose_),
@@ -39,9 +55,9 @@ VectorEntry SkinManipulator::load(std::string filename) {
   double previous = 0;
   png::rgba_pixel previou(0, 0, 0, 0);
   //std::cout << clr_to_int(image[32][16]) << std::endl;
-  for (auto it : rectlist) {
-    for (int y = it.y1; y < it.y2; ++y) {
-      for (int x = it.x1; x < it.x2; ++x) {
+  for (int r = 0; r < rectlist_size; ++r) {
+    for (int y = rectlist[r].y1; y < rectlist[r].y2; ++y) {
+      for (int x = rectlist[r].x1; x < rectlist[r].x2; ++x) {
         if (decompose) {
           if (i < 1184) {
             image[y][x].alpha = 255;
@@ -87,9 +103,9 @@ void SkinManipulator::save(VectorEntry img, std::string filename) {
   unsigned int u;
   double previous = 0;
   png::rgba_pixel previou(0, 0, 0, 0);
-  for (auto it : rectlist) {
-    for (int y = it.y1; y < it.y2; ++y) {
-      for (int x = it.x1; x < it.x2; ++x) {
+  for (int r = 0; r < rectlist_size; ++r) {
+    for (int y = rectlist[r].y1; y < rectlist[r].y2; ++y) {
+      for (int x = rectlist[r].x1; x < rectlist[r].x2; ++x) {
         if (decompose) {
           if (integral) {
             d = img.vec[i];// + 0x80E00000;

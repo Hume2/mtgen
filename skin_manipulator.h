@@ -13,8 +13,7 @@ class VectorEntry;
 class SkinManipulator : public VectorLoader
 {
   public:
-    SkinManipulator(bool integral_, bool decompose_, std::string dirname_,
-                    std::string rectlist_filename = "skin_rectlist.txt");
+    SkinManipulator(bool integral_, bool decompose_, std::string dirname_);
 
     const unsigned int WIDTH = 64;
     const unsigned int HEIGHT = 32;
@@ -28,7 +27,6 @@ class SkinManipulator : public VectorLoader
     virtual int get_vector_size() const;
 
   private:
-    std::vector<Rect> rectlist;
     int vector_size;
 
     bool integral;
