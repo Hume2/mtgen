@@ -27,7 +27,7 @@ const Rect rectlist[rectlist_size] = {
 const int mess_rectlist_size = 8;
 const Rect mess_rectlist[mess_rectlist_size] = {
   {0, 0, 8, 8},
-  {20, 0, 40, 8},
+  {24, 0, 40, 8},
   {56, 0, 64, 8},
   {0, 16, 4, 20},
   {12, 16, 20, 20},
@@ -43,10 +43,14 @@ SkinManipulator::SkinManipulator(bool integral_, std::string dirname_):
   integral(integral_),
   dirname(dirname_)
 {
-  for (auto it : rectlist) {
-    vector_size += it.surface();
+  if (integral) {
+    for (auto it : rectlist) {
+      vector_size += it.surface();
+    }
+    vector_size *= 4;
+  } else {
+    vector_size = WIDTH * HEIGHT * 4;
   }
-  vector_size *= 4;
   std::cout << "Skin vector dimension is " << vector_size << ".\n";
 }
 
@@ -58,31 +62,37 @@ VectorEntry SkinManipulator::load(std::string filename) {
     return VectorEntry(zero_vector<double>(vector_size));
   }
 
-  clear_mess(image);
+  if (!integral) {
+    clear_mess(image);
+    pixel_tools::derivate_image(image);
+    //pixel_tools::integrate_image(image);
+  }
 
   vector<double> result(vector_size);
   int i = 0;
-  png::rgba_pixel previou(0, 0, 0, 0);
-  for (int r = 0; r < rectlist_size; ++r) {
-    for (int y = rectlist[r].y1; y < rectlist[r].y2; ++y) {
-      for (int x = rectlist[r].x1; x < rectlist[r].x2; ++x) {
-        if (integral) {
+  if (integral) {
+    for (int r = 0; r < rectlist_size; ++r) {
+      for (int y = rectlist[r].y1; y < rectlist[r].y2; ++y) {
+        for (int x = rectlist[r].x1; x < rectlist[r].x2; ++x) {
           result[i] = image[y][x].red;
           result[i+1] = image[y][x].green;
           result[i+2] = image[y][x].blue;
           result[i+3] = image[y][x].alpha;
-        } else {
-          result[i] = image[y][x].red - previou.red;
-          result[i+1] = image[y][x].green - previou.green;
-          result[i+2] = image[y][x].blue - previou.blue;
-          result[i+3] = image[y][x].alpha - previou.alpha;
-          previou = image[y][x];
+          i += 4;
         }
+      }
+    }
+  } else {
+    for (unsigned int y = 0; y < HEIGHT; ++y) {
+      for (unsigned int x = 0; x < WIDTH; ++x) {
+        result[i] = to_number(image[y][x].red);
+        result[i+1] = to_number(image[y][x].green);
+        result[i+2] = to_number(image[y][x].blue);
+        result[i+3] = to_number(image[y][x].alpha);
         i += 4;
       }
     }
   }
-
   return VectorEntry(result);
 }
 
@@ -90,28 +100,31 @@ void SkinManipulator::save(VectorEntry img, std::string filename) {
   png::image<png::rgba_pixel> image(WIDTH, HEIGHT);
 
   int i = 0;
-  png::rgba_pixel previou(0, 0, 0, 0);
-  for (int r = 0; r < rectlist_size; ++r) {
-    for (int y = rectlist[r].y1; y < rectlist[r].y2; ++y) {
-      for (int x = rectlist[r].x1; x < rectlist[r].x2; ++x) {
-        if (integral) {
+  if (integral) {
+    for (int r = 0; r < rectlist_size; ++r) {
+      for (int y = rectlist[r].y1; y < rectlist[r].y2; ++y) {
+        for (int x = rectlist[r].x1; x < rectlist[r].x2; ++x) {
           image[y][x].red = img.vec[i];
           image[y][x].green = img.vec[i+1];
           image[y][x].blue = img.vec[i+2];
           image[y][x].alpha = img.vec[i+3];
-        } else {
-          image[y][x].red = previou.red + img.vec[i];
-          image[y][x].green = previou.green + img.vec[i+1];
-          image[y][x].blue = previou.blue + img.vec[i+2];
-          image[y][x].alpha = previou.alpha + img.vec[i+3];
-          previou = image[y][x];
+          i += 4;
         }
+      }
+    }
+  } else {
+    for (unsigned int y = 0; y < HEIGHT; ++y) {
+      for (unsigned int x = 0; x < WIDTH; ++x) {
+        image[y][x].red = to_pix(img.vec[i]);
+        image[y][x].green = to_pix(img.vec[i+1]);
+        image[y][x].blue = to_pix(img.vec[i+2]);
+        image[y][x].alpha = to_pix(img.vec[i+3]);
         i += 4;
       }
     }
+    pixel_tools::integrate_image(image);
+    clear_mess(image);
   }
-
-  clear_mess(image);
 
   image.write(filename.c_str());
 }
@@ -185,5 +198,21 @@ void SkinManipulator::clear_mess(png::image<png::rgba_pixel>& img) const {
         }
       }
     }
+  }
+}
+
+double SkinManipulator::to_number(unsigned char uc) const {
+  if (uc >= 128) {
+    return double(uc) - 256;
+  } else {
+    return uc;
+  }
+}
+
+unsigned char SkinManipulator::to_pix(double num) const {
+  if (num < 0) {
+    return 256 + num;
+  } else {
+    return num;
   }
 }

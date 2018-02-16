@@ -24,6 +24,8 @@ int main(int argc, char** argv) {
   srandom(time(0));
   SkinManipulator sm(true, "training");
 
+  sm.save(sm.load("training/character_555.png"), "test.png");
+
   /*TrainerFarm tf(std::shared_ptr<Trainer>(new Trainer(&sm)));
   //tf.force_normalise();
   tf.grow(10, 2, SHAPE_CUBE);

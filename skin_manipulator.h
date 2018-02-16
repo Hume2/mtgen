@@ -34,6 +34,8 @@ class SkinManipulator : public VectorLoader
     std::string dirname;
 
     void clear_mess(png::image<png::rgba_pixel>& img) const;
+    double to_number(unsigned char uc) const;
+    unsigned char to_pix(double num) const;
 };
 
 #endif // SKINMANIPULATOR_H
