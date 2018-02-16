@@ -3,7 +3,7 @@
 
 #include "matrix_branch.h"
 
-std::forward_list<std::unique_ptr<MatrixBranch> > MatrixBranch::stock;
+//std::forward_list<std::unique_ptr<MatrixBranch> > MatrixBranch::stock;
 
 MatrixBranch::MatrixBranch(const boost::numeric::ublas::matrix<double>& matrix_,
                            const boost::numeric::ublas::vector<double>& shift_,

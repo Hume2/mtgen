@@ -29,7 +29,8 @@ Trainer::Trainer(int vector_size_, std::deque<VectorEntry> dataset_, int depth_,
   division(),
   positive(),
   negative(),
-  matrix_branch()
+  matrix_branch(),
+  matrix_stock()
 {
   matrix_branch = matrix_branch_;
   recalculate_minmax();
@@ -52,7 +53,8 @@ Trainer::Trainer(VectorLoader* loader) :
   division(),
   positive(),
   negative(),
-  matrix_branch()
+  matrix_branch(),
+  matrix_stock()
 {
   loader->load_vectors(dataset);
   matrix_branch = NULL;
@@ -60,7 +62,8 @@ Trainer::Trainer(VectorLoader* loader) :
   trainer_count++;
 }
 
-Trainer::Trainer(int vector_size_, int depth_, MatrixBranch* matrix_branch_) :
+Trainer::Trainer(int vector_size_, int depth_, MatrixBranch* matrix_branch_,
+                 std::forward_list<std::unique_ptr<MatrixBranch> >* ms) :
   dataset(),
   ID(trainer_count),
   vector_size(vector_size_),
@@ -74,10 +77,16 @@ Trainer::Trainer(int vector_size_, int depth_, MatrixBranch* matrix_branch_) :
   division(),
   positive(),
   negative(),
-  matrix_branch()
+  matrix_branch(),
+  matrix_stock()
 {
   matrix_branch = matrix_branch_;
+  matrix_stock = ms;
   trainer_count++;
+}
+
+void Trainer::give_matrix_stock(std::forward_list<std::unique_ptr<MatrixBranch> > *ms) {
+  matrix_stock = ms;
 }
 
 void Trainer::recalculate_minmax() {
@@ -242,8 +251,8 @@ void Trainer::calculate_division(bool delete_data) {
   division.emplace(DivisionPlane((true_centre*true_count + fake_centre*fake_count)/(true_count + fake_count),
                                  true_centre - fake_centre));
 
-  positive.reset(new Trainer(vector_size, depth + 1, matrix_branch));
-  negative.reset(new Trainer(vector_size, depth + 1, matrix_branch));
+  positive.reset(new Trainer(vector_size, depth + 1, matrix_branch, matrix_stock));
+  negative.reset(new Trainer(vector_size, depth + 1, matrix_branch, matrix_stock));
 
   while (dataset.size()) {
     if (division->rate(dataset.rbegin()->vec) > 0) {
@@ -476,8 +485,8 @@ void Trainer::normalise_dataset() {
   //std::cout << inverse << std::endl;
 
   std::unique_ptr<MatrixBranch> new_branch(new MatrixBranch(M, shift, matrix_branch));
-  MatrixBranch::stock.push_front(std::move(new_branch));
-  matrix_branch = MatrixBranch::stock.begin()->get();
+  matrix_stock->push_front(std::move(new_branch));
+  matrix_branch = matrix_stock->begin()->get();
   vector_size = inverse_dot_products.size();
   recalculate_minmax();
 }

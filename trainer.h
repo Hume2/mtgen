@@ -2,6 +2,7 @@
 #define TRAINER_H
 
 #include <boost/numeric/ublas/vector.hpp>
+#include <forward_list>
 #include <memory>
 #include <boost/optional/optional.hpp>
 #include <deque>
@@ -43,11 +44,13 @@ class Trainer
     std::vector<std::deque<bool> > get_leaves() const;
     std::unique_ptr<Trainer> cut_leaf(std::deque<bool> history);
     void fill_leaf(std::deque<bool> history, int count, Shape shape);
+    void give_matrix_stock(std::forward_list<std::unique_ptr<MatrixBranch> >* ms);
 
     void normalise_dataset();
 
   protected:
-    Trainer(int vector_size_, int depth_, MatrixBranch* matrix_branch_);
+    Trainer(int vector_size_, int depth_, MatrixBranch* matrix_branch_,
+            std::forward_list<std::unique_ptr<MatrixBranch> >* ms);
     static int trainer_count;
 
     std::deque<VectorEntry> dataset;
@@ -83,6 +86,7 @@ class Trainer
     std::unique_ptr<Trainer> negative;
 
     MatrixBranch* matrix_branch;
+    std::forward_list<std::unique_ptr<MatrixBranch> >* matrix_stock;
 
     std::string spaces() const;
     void conservate();

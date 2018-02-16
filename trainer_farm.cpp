@@ -4,15 +4,17 @@
 
 #include "trainer_farm.h"
 
-#include "trainer.h"
 #include "progress.h"
+#include "trainer.h"
 
 TrainerFarm::TrainerFarm(std::unique_ptr<Trainer> first_seed) :
   seeds(),
   total_trues(first_seed->count_trues()),
-  current_depth(10)
+  current_depth(10),
+  matrix_stock()
 {
   std::cout << "TrainerFarm created" << std::endl;
+  first_seed->give_matrix_stock(&matrix_stock);
   //first_seed->normalise_dataset();
   seeds.push_back(std::move(first_seed));
 }

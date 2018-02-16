@@ -3,11 +3,14 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <deque>
+#include <forward_list>
 #include <memory>
 #include <vector>
 
+#include "matrix_branch.h"
 #include "shape.h"
 
+//class MatrixBranch;
 class Trainer;
 
 class TrainerFarm
@@ -30,6 +33,8 @@ class TrainerFarm
     std::deque<std::unique_ptr<Trainer> > seeds;
     int total_trues;
     int current_depth;
+
+    std::forward_list<std::unique_ptr<MatrixBranch> > matrix_stock;
 };
 
 #endif // TRAINERFARM_H
