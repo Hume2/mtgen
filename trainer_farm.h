@@ -4,6 +4,7 @@
 #include <boost/serialization/forward_list.hpp>
 #include <boost/serialization/deque.hpp>
 #include <boost/serialization/unique_ptr.hpp>
+#include <boost/serialization/split_member.hpp>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <deque>
@@ -18,6 +19,7 @@
 class TrainerFarm
 {
   public:
+    TrainerFarm();
     TrainerFarm(std::unique_ptr<Trainer> first_seed);
 
     void grow(int cycles, int coef, Shape shape);
@@ -42,12 +44,26 @@ class TrainerFarm
     friend class boost::serialization::access;
 
     template<class Archive>
-    void serialize(Archive& ar, const unsigned int version) {
+    void save(Archive& ar, const unsigned int version) const {
+      ar & matrix_stock;
       ar & seeds;
       ar & total_trues;
       ar & current_depth;
-      ar & matrix_stock;
     }
+
+    template<class Archive>
+    void load(Archive& ar, const unsigned int version) {
+      ar & matrix_stock;
+      ar & seeds;
+      ar & total_trues;
+      ar & current_depth;
+
+      for (auto& it : seeds) {
+        it->give_matrix_stock(&matrix_stock);
+      }
+    }
+
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
 #endif // TRAINERFARM_H

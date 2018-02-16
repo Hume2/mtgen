@@ -23,6 +23,7 @@ class VectorLoader;
 class Trainer
 {
   public:
+    Trainer();
     Trainer(int vector_size_, std::deque<VectorEntry> dataset_, int depth_ = 0,
             MatrixBranch* matrix_branch_ = NULL);
     Trainer(VectorLoader* loader);
@@ -114,7 +115,7 @@ class Trainer
       ar & positive;
       ar & negative;
       ar & matrix_branch;
-      ar & matrix_stock;
+      //ar & matrix_stock;
     }
 };
 

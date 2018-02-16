@@ -14,6 +14,26 @@
 
 int Trainer::trainer_count = 0;
 
+Trainer::Trainer() :
+  dataset(),
+  ID(),
+  vector_size(),
+  depth(),
+  minimum(),
+  maximum(),
+  true_centre(),
+  fake_centre(),
+  true_count(),
+  fake_count(),
+  division(),
+  positive(),
+  negative(),
+  matrix_branch(),
+  matrix_stock()
+{
+
+}
+
 Trainer::Trainer(int vector_size_, std::deque<VectorEntry> dataset_, int depth_,
                  MatrixBranch* matrix_branch_) :
   dataset(dataset_),

@@ -8,6 +8,7 @@
 class VectorEntry
 {
   public:
+    VectorEntry();
     VectorEntry(boost::numeric::ublas::vector<double> vector_, bool is_true_ = true);
     VectorEntry(const boost::numeric::ublas::vector<double>& min,
                 const boost::numeric::ublas::vector<double>& max,

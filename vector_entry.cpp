@@ -3,6 +3,14 @@
 
 #include "vector_entry.h"
 
+VectorEntry::VectorEntry() :
+  vec(),
+  is_true()
+{
+
+}
+
+
 VectorEntry::VectorEntry(boost::numeric::ublas::vector<double> vector_, bool is_true_) :
   vec(vector_),
   is_true(is_true_)

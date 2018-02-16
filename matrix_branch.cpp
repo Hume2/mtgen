@@ -5,6 +5,15 @@
 
 //std::forward_list<std::unique_ptr<MatrixBranch> > MatrixBranch::stock;
 
+MatrixBranch::MatrixBranch() :
+  my_matrix(),
+  shift(),
+  parent(),
+  volume()
+{
+
+}
+
 MatrixBranch::MatrixBranch(const boost::numeric::ublas::matrix<double>& matrix_,
                            const boost::numeric::ublas::vector<double>& shift_,
                            MatrixBranch* parent_) :

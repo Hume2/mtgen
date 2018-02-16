@@ -6,6 +6,15 @@
 
 #include "progress.h"
 
+TrainerFarm::TrainerFarm() :
+  seeds(),
+  total_trues(),
+  current_depth(),
+  matrix_stock()
+{
+
+}
+
 TrainerFarm::TrainerFarm(std::unique_ptr<Trainer> first_seed) :
   seeds(),
   total_trues(first_seed->count_trues()),

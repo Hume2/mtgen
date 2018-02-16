@@ -1,13 +1,20 @@
 #include "division_plane.h"
 
+DivisionPlane::DivisionPlane() :
+  point(),
+  normal(),
+  mirror_precalc()
+{
+
+}
+
 DivisionPlane::DivisionPlane(boost::numeric::ublas::vector<double> point_,
                              boost::numeric::ublas::vector<double> vector_) :
   point(point_),
   normal(vector_),
   mirror_precalc()
 {
-  using namespace boost::numeric::ublas;
-  mirror_precalc = (-2 / inner_prod(normal, normal)) * normal;
+  precalc();
 }
 
 double DivisionPlane::rate(const boost::numeric::ublas::vector<double>& vec) const {
@@ -25,3 +32,7 @@ bool DivisionPlane::mirror(boost::numeric::ublas::vector<double> &vec, bool posi
   return false;
 }
 
+void DivisionPlane::precalc() {
+  using namespace boost::numeric::ublas;
+  mirror_precalc = (-2 / inner_prod(normal, normal)) * normal;
+}

@@ -8,6 +8,7 @@
 class MatrixBranch
 {
   public:
+    MatrixBranch();
     MatrixBranch(const boost::numeric::ublas::matrix<double>& matrix_,
                  const boost::numeric::ublas::vector<double>& shift_,
                  MatrixBranch* parent_);
