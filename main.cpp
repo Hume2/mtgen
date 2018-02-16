@@ -13,6 +13,11 @@
 #include "trainer_farm.h"
 #include "vector_entry.h"
 
+#include <fstream>
+
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 int main(int argc, char** argv) {
   srandom(time(0));
   SkinManipulator sm(true, false, "training");
@@ -27,6 +32,12 @@ int main(int argc, char** argv) {
     tf.harverst_cycle(14, i == 50, SHAPE_ORTHOPLEX);
   }
   sm.save(tf.generate_random(SHAPE_ORTHOPLEX), "random.png");
+
+  std::ofstream ofs("training_results/experiment.txt");
+  {
+    boost::archive::text_oarchive oa(ofs);
+    oa << tf;
+  }
   //tf.show_trees();
   return 0;
 }
