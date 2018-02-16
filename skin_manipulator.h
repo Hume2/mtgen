@@ -13,7 +13,7 @@ class VectorEntry;
 class SkinManipulator : public VectorLoader
 {
   public:
-    SkinManipulator(bool integral_, bool decompose_, std::string dirname_);
+    SkinManipulator(bool integral_, std::string dirname_);
 
     const unsigned int WIDTH = 64;
     const unsigned int HEIGHT = 32;
@@ -30,7 +30,6 @@ class SkinManipulator : public VectorLoader
     int vector_size;
 
     bool integral;
-    bool decompose;
     std::string dirname;
 };
 

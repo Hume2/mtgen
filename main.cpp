@@ -22,9 +22,9 @@
 
 int main(int argc, char** argv) {
   srandom(time(0));
-  SkinManipulator sm(true, false, "training");
+  SkinManipulator sm(true, "training");
 
-  TrainerFarm tf(std::shared_ptr<Trainer>(new Trainer(&sm)));
+  /*TrainerFarm tf(std::shared_ptr<Trainer>(new Trainer(&sm)));
   //tf.force_normalise();
   tf.grow(10, 2, SHAPE_CUBE);
   tf.harverst_cycle(14, true, SHAPE_CUBE);
@@ -38,13 +38,13 @@ int main(int argc, char** argv) {
   {
     boost::archive::binary_oarchive oa(ofs);
     oa << tf;
-  }
-  /*TrainerFarm tf;
+  }*/
+  TrainerFarm tf;
   {
     std::ifstream ifs("training_results/experiment.txt");
     boost::archive::binary_iarchive ia(ifs);
     ia >> tf;
-  }*/
+  }
   sm.save(tf.generate_random(SHAPE_ORTHOPLEX), "random.png");
   //tf.show_trees();
   return 0;

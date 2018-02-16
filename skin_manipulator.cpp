@@ -26,18 +26,15 @@ const Rect rectlist[rectlist_size] = {
 
 }
 
-SkinManipulator::SkinManipulator(bool integral_, bool decompose_, std::string dirname_):
+SkinManipulator::SkinManipulator(bool integral_, std::string dirname_):
   vector_size(0),
   integral(integral_),
-  decompose(decompose_),
   dirname(dirname_)
 {
   for (auto it : rectlist) {
     vector_size += it.surface();
   }
-  if (!decompose) {
-    vector_size *= 4;
-  }
+  vector_size *= 4;
   std::cout << "Skin vector dimension is " << vector_size << ".\n";
 }
 
@@ -51,43 +48,27 @@ VectorEntry SkinManipulator::load(std::string filename) {
 
   vector<double> result(vector_size);
   int i = 0;
-  double d;
-  double previous = 0;
   png::rgba_pixel previou(0, 0, 0, 0);
   //std::cout << clr_to_int(image[32][16]) << std::endl;
   for (int r = 0; r < rectlist_size; ++r) {
     for (int y = rectlist[r].y1; y < rectlist[r].y2; ++y) {
       for (int x = rectlist[r].x1; x < rectlist[r].x2; ++x) {
-        if (decompose) {
-          if (i < 1184) {
-            image[y][x].alpha = 255;
-          }
-          d = clr_to_int(image[y][x]);
-          if (integral) {
-            result[i] = d;
-          } else {
-            result[i] = d - previous;
-            previous = d;
-          }
-          ++i;
-        } else {
-          if (i < 4736) {
-            image[y][x].alpha = 255;
-          }
-          if (integral) {
-            result[i] = image[y][x].red;
-            result[i+1] = image[y][x].green;
-            result[i+2] = image[y][x].blue;
-            result[i+3] = image[y][x].alpha;
-          } else {
-            result[i] = image[y][x].red - previou.red;
-            result[i+1] = image[y][x].green - previou.green;
-            result[i+2] = image[y][x].blue - previou.blue;
-            result[i+3] = image[y][x].alpha - previou.alpha;
-            previou = image[y][x];
-          }
-          i += 4;
+        if (i < 4736) {
+          image[y][x].alpha = 255;
         }
+        if (integral) {
+          result[i] = image[y][x].red;
+          result[i+1] = image[y][x].green;
+          result[i+2] = image[y][x].blue;
+          result[i+3] = image[y][x].alpha;
+        } else {
+          result[i] = image[y][x].red - previou.red;
+          result[i+1] = image[y][x].green - previou.green;
+          result[i+2] = image[y][x].blue - previou.blue;
+          result[i+3] = image[y][x].alpha - previou.alpha;
+          previou = image[y][x];
+        }
+        i += 4;
       }
     }
   }
@@ -99,50 +80,26 @@ void SkinManipulator::save(VectorEntry img, std::string filename) {
   png::image<png::rgba_pixel> image(WIDTH, HEIGHT);
 
   int i = 0;
-  double d;
-  unsigned int u;
-  double previous = 0;
   png::rgba_pixel previou(0, 0, 0, 0);
   for (int r = 0; r < rectlist_size; ++r) {
     for (int y = rectlist[r].y1; y < rectlist[r].y2; ++y) {
       for (int x = rectlist[r].x1; x < rectlist[r].x2; ++x) {
-        if (decompose) {
-          if (integral) {
-            d = img.vec[i];// + 0x80E00000;
-          } else {
-            d = img.vec[i] + previous;
-          }
-          if (d < 0) {
-            u = 0;
-          } else if (d > 0xFFFFFFFF) {
-            u = 0xFFFFFFFF;
-          } else {
-            u = d;
-          }
-          image[y][x] = int_to_clr(u);
-          if (i < 1184) {
-            image[y][x].alpha = 255;
-          }
-          previous = d;
-          ++i;
+        if (integral) {
+          image[y][x].red = img.vec[i];
+          image[y][x].green = img.vec[i+1];
+          image[y][x].blue = img.vec[i+2];
+          image[y][x].alpha = img.vec[i+3];
         } else {
-          if (integral) {
-            image[y][x].red = img.vec[i];
-            image[y][x].green = img.vec[i+1];
-            image[y][x].blue = img.vec[i+2];
-            image[y][x].alpha = img.vec[i+3];
-          } else {
-            image[y][x].red = previou.red + img.vec[i];
-            image[y][x].green = previou.green + img.vec[i+1];
-            image[y][x].blue = previou.blue + img.vec[i+2];
-            image[y][x].alpha = previou.alpha + img.vec[i+3];
-            previou = image[y][x];
-          }
-          if (i < 4736) {
-            image[y][x].alpha = 255;
-          }
-          i += 4;
+          image[y][x].red = previou.red + img.vec[i];
+          image[y][x].green = previou.green + img.vec[i+1];
+          image[y][x].blue = previou.blue + img.vec[i+2];
+          image[y][x].alpha = previou.alpha + img.vec[i+3];
+          previou = image[y][x];
         }
+        if (i < 4736) {
+          image[y][x].alpha = 255;
+        }
+        i += 4;
       }
     }
   }
