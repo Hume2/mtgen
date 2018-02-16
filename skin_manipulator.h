@@ -4,6 +4,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <string>
 #include <list>
+#include <png++/png.hpp>
 
 #include "rect.h"
 #include "vector_loader.h"
@@ -31,6 +32,8 @@ class SkinManipulator : public VectorLoader
 
     bool integral;
     std::string dirname;
+
+    void clear_mess(png::image<png::rgba_pixel>& img) const;
 };
 
 #endif // SKINMANIPULATOR_H

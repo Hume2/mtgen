@@ -1,6 +1,5 @@
 #include <boost/filesystem.hpp>
 #include <boost/range/iterator_range.hpp>
-#include <png++/png.hpp>
 #include <stdio.h>
 
 #include "skin_manipulator.h"
@@ -11,6 +10,7 @@
 namespace {
 
 const int rectlist_size = 10;
+const int rectlist_critical = 8;
 const Rect rectlist[rectlist_size] = {
   {8, 0, 24, 8},
   {0, 8, 32, 16},
@@ -22,6 +22,18 @@ const Rect rectlist[rectlist_size] = {
   {0, 20, 16, 32},
   {40, 0, 56, 8},
   {32, 8, 64, 16}
+};
+
+const int mess_rectlist_size = 8;
+const Rect mess_rectlist[mess_rectlist_size] = {
+  {0, 0, 8, 8},
+  {20, 0, 40, 8},
+  {56, 0, 64, 8},
+  {0, 16, 4, 20},
+  {12, 16, 20, 20},
+  {36, 16, 44, 20},
+  {52, 16, 56, 20},
+  {56, 16, 64, 32}
 };
 
 }
@@ -46,16 +58,14 @@ VectorEntry SkinManipulator::load(std::string filename) {
     return VectorEntry(zero_vector<double>(vector_size));
   }
 
+  clear_mess(image);
+
   vector<double> result(vector_size);
   int i = 0;
   png::rgba_pixel previou(0, 0, 0, 0);
-  //std::cout << clr_to_int(image[32][16]) << std::endl;
   for (int r = 0; r < rectlist_size; ++r) {
     for (int y = rectlist[r].y1; y < rectlist[r].y2; ++y) {
       for (int x = rectlist[r].x1; x < rectlist[r].x2; ++x) {
-        if (i < 4736) {
-          image[y][x].alpha = 255;
-        }
         if (integral) {
           result[i] = image[y][x].red;
           result[i+1] = image[y][x].green;
@@ -96,13 +106,12 @@ void SkinManipulator::save(VectorEntry img, std::string filename) {
           image[y][x].alpha = previou.alpha + img.vec[i+3];
           previou = image[y][x];
         }
-        if (i < 4736) {
-          image[y][x].alpha = 255;
-        }
         i += 4;
       }
     }
   }
+
+  clear_mess(image);
 
   image.write(filename.c_str());
 }
@@ -120,7 +129,6 @@ std::deque<VectorEntry> SkinManipulator::load_all_skins() {
     {
       if (std::string((*it).path().extension().string()) == ".png") {
         result.push_back(load((*it).path().string()));
-        //std::cout << result.size() << std::endl;
       }
     }
   }
@@ -140,7 +148,6 @@ void SkinManipulator::load_vectors(std::deque<VectorEntry>& dataset) {
     {
       if (std::string((*it).path().extension().string()) == ".png") {
         dataset.push_back(load((*it).path().string()));
-        //std::cout << result.size() << std::endl;
       }
     }
   }
@@ -148,4 +155,35 @@ void SkinManipulator::load_vectors(std::deque<VectorEntry>& dataset) {
 
 int SkinManipulator::get_vector_size() const {
   return vector_size;
+}
+
+void SkinManipulator::clear_mess(png::image<png::rgba_pixel>& img) const {
+  for (int r = 0; r < mess_rectlist_size; ++r) {
+    for (int y = mess_rectlist[r].y1; y < mess_rectlist[r].y2; ++y) {
+      for (int x = mess_rectlist[r].x1; x < mess_rectlist[r].x2; ++x) {
+        img[y][x].red = 0;
+        img[y][x].green = 0;
+        img[y][x].blue = 0;
+        img[y][x].alpha = 0;
+      }
+    }
+  }
+  for (int r = 0; r < rectlist_critical; ++r) {
+    for (int y = rectlist[r].y1; y < rectlist[r].y2; ++y) {
+      for (int x = rectlist[r].x1; x < rectlist[r].x2; ++x) {
+        img[y][x].alpha = 255;
+      }
+    }
+  }
+  for (int r = rectlist_critical; r < rectlist_size; ++r) {
+    for (int y = rectlist[r].y1; y < rectlist[r].y2; ++y) {
+      for (int x = rectlist[r].x1; x < rectlist[r].x2; ++x) {
+        if (img[y][x].alpha >= 128) {
+          img[y][x].alpha = 255;
+        } else {
+          img[y][x].alpha = 0;
+        }
+      }
+    }
+  }
 }
