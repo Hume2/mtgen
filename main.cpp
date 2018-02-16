@@ -22,28 +22,26 @@
 
 int main(int argc, char** argv) {
   srandom(time(0));
-  SkinManipulator sm(true, "training");
-
-  sm.save(sm.load("training/character_555.png"), "test.png");
+  SkinManipulator sm(false, "training");
 
   /*TrainerFarm tf(std::shared_ptr<Trainer>(new Trainer(&sm)));
   //tf.force_normalise();
   tf.grow(10, 2, SHAPE_CUBE);
   tf.harverst_cycle(14, true, SHAPE_CUBE);
-  for (int i = 1; i < 12; ++i) {
+  for (int i = 1; i < 30; ++i) {
     std::cout << "Cycle " << i << "..." << std::endl;
     tf.grow(2, 40, SHAPE_ORTHOPLEX);
     tf.harverst_cycle(14, i == 50, SHAPE_ORTHOPLEX);
   }
 
-  std::ofstream ofs("training_results/experiment.txt");
+  std::ofstream ofs("training_results/derivative.dat");
   {
     boost::archive::binary_oarchive oa(ofs);
     oa << tf;
   }*/
   TrainerFarm tf;
   {
-    std::ifstream ifs("training_results/experiment.txt");
+    std::ifstream ifs("training_results/derivative.dat");
     boost::archive::binary_iarchive ia(ifs);
     ia >> tf;
   }
