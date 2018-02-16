@@ -2,7 +2,7 @@
 #define TRAINER_H
 
 #include <boost/serialization/optional.hpp>
-#include <boost/serialization/unique_ptr.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/deque.hpp>
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -47,15 +47,15 @@ class Trainer
     int get_vector_size() const;
 
     std::vector<std::deque<bool> > get_leaves() const;
-    std::unique_ptr<Trainer> cut_leaf(std::deque<bool> history);
+    std::shared_ptr<Trainer> cut_leaf(std::deque<bool> history);
     void fill_leaf(std::deque<bool> history, int count, Shape shape);
-    void give_matrix_stock(std::forward_list<std::unique_ptr<MatrixBranch> >* ms);
+    void give_matrix_stock(std::forward_list<std::shared_ptr<MatrixBranch> >* ms);
 
     void normalise_dataset();
 
   protected:
     Trainer(int vector_size_, int depth_, MatrixBranch* matrix_branch_,
-            std::forward_list<std::unique_ptr<MatrixBranch> >* ms);
+            std::forward_list<std::shared_ptr<MatrixBranch> >* ms);
     static int trainer_count;
 
     std::deque<VectorEntry> dataset;
@@ -69,7 +69,7 @@ class Trainer
     void categorise(VectorEntry& vec) const;
 
     std::vector<std::deque<bool> > get_leaves_recursive(std::deque<bool>& history) const;
-    std::unique_ptr<Trainer> cut_leaf_recursive(std::deque<bool>& history);
+    std::shared_ptr<Trainer> cut_leaf_recursive(std::deque<bool>& history);
     void fill_leaf_recursive(std::deque<bool>& history, VectorEntry& fake);
 
   private:
@@ -87,11 +87,11 @@ class Trainer
     int fake_count;
 
     boost::optional<DivisionPlane> division;
-    std::unique_ptr<Trainer> positive;
-    std::unique_ptr<Trainer> negative;
+    std::shared_ptr<Trainer> positive;
+    std::shared_ptr<Trainer> negative;
 
     MatrixBranch* matrix_branch;
-    std::forward_list<std::unique_ptr<MatrixBranch> >* matrix_stock;
+    std::forward_list<std::shared_ptr<MatrixBranch> >* matrix_stock;
 
     std::string spaces() const;
     void conservate();

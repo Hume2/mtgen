@@ -15,7 +15,7 @@ TrainerFarm::TrainerFarm() :
 
 }
 
-TrainerFarm::TrainerFarm(std::unique_ptr<Trainer> first_seed) :
+TrainerFarm::TrainerFarm(std::shared_ptr<Trainer> first_seed) :
   seeds(),
   total_trues(first_seed->count_trues()),
   current_depth(10),
@@ -24,7 +24,7 @@ TrainerFarm::TrainerFarm(std::unique_ptr<Trainer> first_seed) :
   std::cout << "TrainerFarm created" << std::endl;
   first_seed->give_matrix_stock(&matrix_stock);
   //first_seed->normalise_dataset();
-  seeds.push_back(std::move(first_seed));
+  seeds.push_back(first_seed);
 }
 
 void TrainerFarm::grow(int cycles, int coef, Shape shape) {
@@ -80,7 +80,7 @@ void TrainerFarm::harverst_one(bool normalise, Shape shape) {
   std::vector<std::deque<bool> > leaves = seeds[0]->get_leaves();
   for (auto it : leaves) {
     seeds[0]->fill_leaf(it, /*seeds[0]->get_vector_size()*/ 30, shape);
-    seeds.push_back(std::move(seeds[0]->cut_leaf(it)));
+    seeds.push_back(seeds[0]->cut_leaf(it));
     Trainer* tr = (*(seeds.end()-1)).get();
 
     if (normalise) {

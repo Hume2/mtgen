@@ -83,7 +83,7 @@ Trainer::Trainer(VectorLoader* loader) :
 }
 
 Trainer::Trainer(int vector_size_, int depth_, MatrixBranch* matrix_branch_,
-                 std::forward_list<std::unique_ptr<MatrixBranch> >* ms) :
+                 std::forward_list<std::shared_ptr<MatrixBranch> >* ms) :
   dataset(),
   ID(trainer_count),
   vector_size(vector_size_),
@@ -105,8 +105,14 @@ Trainer::Trainer(int vector_size_, int depth_, MatrixBranch* matrix_branch_,
   trainer_count++;
 }
 
-void Trainer::give_matrix_stock(std::forward_list<std::unique_ptr<MatrixBranch> > *ms) {
+void Trainer::give_matrix_stock(std::forward_list<std::shared_ptr<MatrixBranch> > *ms) {
   matrix_stock = ms;
+  if (positive) {
+    positive->give_matrix_stock(ms);
+  }
+  if (negative) {
+    negative->give_matrix_stock(ms);
+  }
 }
 
 void Trainer::recalculate_minmax() {
@@ -383,20 +389,20 @@ std::vector<std::deque<bool> > Trainer::get_leaves_recursive(std::deque<bool>& h
   }
 }
 
-std::unique_ptr<Trainer> Trainer::cut_leaf_recursive(std::deque<bool>& history) {
+std::shared_ptr<Trainer> Trainer::cut_leaf_recursive(std::deque<bool>& history) {
   bool current = history[0];
   history.pop_front();
   if (history.size()) {
     if (current) {
-      return std::move(positive->cut_leaf_recursive(history));
+      return positive->cut_leaf_recursive(history);
     } else {
-      return std::move(negative->cut_leaf_recursive(history));
+      return negative->cut_leaf_recursive(history);
     }
   } else {
     if (current) {
-      return std::move(positive);
+      return positive;
     } else {
-      return std::move(negative);
+      return negative;
     }
   }
 }
@@ -421,8 +427,8 @@ std::vector<std::deque<bool> > Trainer::get_leaves() const {
   return get_leaves_recursive(temp);
 }
 
-std::unique_ptr<Trainer> Trainer::cut_leaf(std::deque<bool> history) {
-  return std::move(cut_leaf_recursive(history));
+std::shared_ptr<Trainer> Trainer::cut_leaf(std::deque<bool> history) {
+  return cut_leaf_recursive(history);
 }
 
 void Trainer::fill_leaf(std::deque<bool> history, int count, Shape shape) {
@@ -504,8 +510,8 @@ void Trainer::normalise_dataset() {
   //std::cout << "Found Matrix: " << M << std::endl;
   //std::cout << inverse << std::endl;
 
-  std::unique_ptr<MatrixBranch> new_branch(new MatrixBranch(M, shift, matrix_branch));
-  matrix_stock->push_front(std::move(new_branch));
+  std::shared_ptr<MatrixBranch> new_branch(new MatrixBranch(M, shift, matrix_branch));
+  matrix_stock->push_front(new_branch);
   matrix_branch = matrix_stock->begin()->get();
   vector_size = inverse_dot_products.size();
   recalculate_minmax();

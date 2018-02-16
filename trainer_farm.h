@@ -3,7 +3,7 @@
 
 #include <boost/serialization/forward_list.hpp>
 #include <boost/serialization/deque.hpp>
-#include <boost/serialization/unique_ptr.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/split_member.hpp>
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -20,7 +20,7 @@ class TrainerFarm
 {
   public:
     TrainerFarm();
-    TrainerFarm(std::unique_ptr<Trainer> first_seed);
+    TrainerFarm(std::shared_ptr<Trainer> first_seed);
 
     void grow(int cycles, int coef, Shape shape);
     void populate(int coef, Shape shape);
@@ -34,11 +34,11 @@ class TrainerFarm
     double get_max_volume();
 
   private:
-    std::deque<std::unique_ptr<Trainer> > seeds;
+    std::deque<std::shared_ptr<Trainer> > seeds;
     int total_trues;
     int current_depth;
 
-    std::forward_list<std::unique_ptr<MatrixBranch> > matrix_stock;
+    std::forward_list<std::shared_ptr<MatrixBranch> > matrix_stock;
 
   private:
     friend class boost::serialization::access;
