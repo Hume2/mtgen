@@ -490,3 +490,4 @@ void Trainer::normalise_dataset() {
   vector_size = inverse_dot_products.size();
   recalculate_minmax();
 }
+

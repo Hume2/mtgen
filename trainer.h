@@ -1,6 +1,10 @@
 #ifndef TRAINER_H
 #define TRAINER_H
 
+#include <boost/serialization/optional.hpp>
+#include <boost/serialization/unique_ptr.hpp>
+#include <boost/serialization/deque.hpp>
+
 #include <boost/numeric/ublas/vector.hpp>
 #include <forward_list>
 #include <memory>
@@ -90,6 +94,28 @@ class Trainer
 
     std::string spaces() const;
     void conservate();
+
+  private:
+    friend class boost::serialization::access;
+
+    template<class Archive>
+    void serialize(Archive& ar, const unsigned int version) {
+      ar & dataset;
+      ar & ID;
+      ar & vector_size;
+      ar & depth;
+      ar & minimum;
+      ar & maximum;
+      ar & true_centre;
+      ar & fake_centre;
+      ar & true_count;
+      ar & fake_count;
+      ar & division;
+      ar & positive;
+      ar & negative;
+      ar & matrix_branch;
+      ar & matrix_stock;
+    }
 };
 
 #endif // TRAINER_H

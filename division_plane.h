@@ -17,6 +17,16 @@ class DivisionPlane
     boost::numeric::ublas::vector<double> normal;
 
     boost::numeric::ublas::vector<double> mirror_precalc;
+
+  private:
+    friend class boost::serialization::access;
+
+    template<class Archive>
+    void serialize(Archive& ar, const unsigned int version) {
+      ar & point;
+      ar & normal;
+      ar & mirror_precalc;
+    }
 };
 
 #endif // DIVISIONPLANE_H

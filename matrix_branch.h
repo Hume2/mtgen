@@ -22,6 +22,17 @@ class MatrixBranch
     boost::numeric::ublas::vector<double> shift;
     MatrixBranch* parent;
     double volume;
+
+  private:
+    friend class boost::serialization::access;
+
+    template<class Archive>
+    void serialize(Archive& ar, const unsigned int version) {
+      ar & my_matrix;
+      ar & shift;
+      ar & parent;
+      ar & volume;
+    }
 };
 
 #endif // MATRIXBRANCH_H

@@ -1,6 +1,10 @@
 #ifndef TRAINERFARM_H
 #define TRAINERFARM_H
 
+#include <boost/serialization/forward_list.hpp>
+#include <boost/serialization/deque.hpp>
+#include <boost/serialization/unique_ptr.hpp>
+
 #include <boost/numeric/ublas/vector.hpp>
 #include <deque>
 #include <forward_list>
@@ -9,9 +13,7 @@
 
 #include "matrix_branch.h"
 #include "shape.h"
-
-//class MatrixBranch;
-class Trainer;
+#include "trainer.h"
 
 class TrainerFarm
 {
@@ -35,6 +37,17 @@ class TrainerFarm
     int current_depth;
 
     std::forward_list<std::unique_ptr<MatrixBranch> > matrix_stock;
+
+  private:
+    friend class boost::serialization::access;
+
+    template<class Archive>
+    void serialize(Archive& ar, const unsigned int version) {
+      ar & seeds;
+      ar & total_trues;
+      ar & current_depth;
+      ar & matrix_stock;
+    }
 };
 
 #endif // TRAINERFARM_H

@@ -15,6 +15,15 @@ class VectorEntry
 
     boost::numeric::ublas::vector<double> vec;
     bool is_true;
+
+  private:
+    friend class boost::serialization::access;
+
+    template<class Archive>
+    void serialize(Archive& ar, const unsigned int version) {
+      ar & vec;
+      ar & is_true;
+    }
 };
 
 #endif // VECTORENTRY_H

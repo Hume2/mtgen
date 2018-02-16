@@ -5,7 +5,6 @@
 #include "trainer_farm.h"
 
 #include "progress.h"
-#include "trainer.h"
 
 TrainerFarm::TrainerFarm(std::unique_ptr<Trainer> first_seed) :
   seeds(),

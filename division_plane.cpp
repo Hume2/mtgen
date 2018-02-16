@@ -24,3 +24,4 @@ bool DivisionPlane::mirror(boost::numeric::ublas::vector<double> &vec, bool posi
   }
   return false;
 }
+
