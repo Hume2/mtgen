@@ -14,7 +14,7 @@ class VectorEntry;
 class SkinManipulator : public VectorLoader
 {
   public:
-    SkinManipulator(bool integral_, std::string dirname_);
+    SkinManipulator(bool integral_, std::string dirname_, std::string savedir_);
 
     const unsigned int WIDTH = 64;
     const unsigned int HEIGHT = 32;
@@ -32,6 +32,7 @@ class SkinManipulator : public VectorLoader
 
     bool integral;
     std::string dirname;
+    std::string savedir;
 
     void clear_mess(png::image<png::rgba_pixel>& img) const;
     double to_number(unsigned char uc) const;

@@ -23,7 +23,7 @@
 
 int main(int argc, char** argv) {
   srandom(time(0));
-  SkinManipulator sm(false, "training");
+  SkinManipulator sm(false, "training", "results");
 
   /*TrainerFarm tf(std::shared_ptr<Trainer>(new Trainer(&sm)));
   //tf.force_normalise();
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
   }
   Progress pr("Generating stuff", 1000, true);
   for (int i = 0; i < 1000; ++i) {
-    sm.save(tf.generate_random(SHAPE_ORTHOPLEX), "results/random_" + std::to_string(i) + ".png");
+    sm.save(tf.generate_random(SHAPE_ORTHOPLEX), "character_" + std::to_string(i));
     pr.step_one();
   }
   pr.done();

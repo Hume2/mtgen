@@ -2,6 +2,8 @@
 #include <boost/range/iterator_range.hpp>
 #include <stdio.h>
 
+#include <fstream>
+
 #include "skin_manipulator.h"
 
 #include "pixel_tools.h"
@@ -36,12 +38,24 @@ const Rect mess_rectlist[mess_rectlist_size] = {
   {56, 16, 64, 32}
 };
 
+const int preview_rectlist_size = 7;
+const RectMovement preview_rectlist[preview_rectlist_size] = {
+  {{8, 8, 16, 16}, {4, 0, 1, 1}},
+  {{40, 8, 48, 16}, {4, 0, 1, 1}},
+  {{20, 20, 28, 32}, {4, 8, 1, 1}},
+  {{44, 20, 48, 32}, {0, 8, 1, 1}},
+  {{44, 20, 48, 32}, {15, 8, -1, 1}},
+  {{4, 20, 8, 32}, {4, 20, 1, 1}},
+  {{4, 20, 8, 32}, {11, 20, -1, 1}}
+};
+
 }
 
-SkinManipulator::SkinManipulator(bool integral_, std::string dirname_):
+SkinManipulator::SkinManipulator(bool integral_, std::string dirname_, std::__cxx11::string savedir_):
   vector_size(0),
   integral(integral_),
-  dirname(dirname_)
+  dirname(dirname_),
+  savedir(savedir_)
 {
   if (integral) {
     for (auto it : rectlist) {
@@ -126,7 +140,25 @@ void SkinManipulator::save(VectorEntry img, std::string filename) {
     clear_mess(image);
   }
 
-  image.write(filename.c_str());
+  std::string fn = savedir + "/textures/" + filename + ".png";
+  image.write(fn.c_str());
+
+  png::image<png::rgba_pixel> preview(16, 32);
+  for (int r = 0; r < preview_rectlist_size; ++r) {
+    pixel_tools::copy_rect(image, preview, preview_rectlist[r]);
+  }
+
+  fn = savedir + "/textures/" + filename + "_preview.png";
+  preview.write(fn.c_str());
+
+  fn = savedir + "/meta/" + filename + ".txt";
+  {
+    std::ofstream ofs(fn.c_str());
+    ofs << filename << "\n";
+    ofs << "MTGEN generator" << "\n";
+    ofs << "WTFPL";
+    ofs.close();
+  }
 }
 
 std::deque<VectorEntry> SkinManipulator::load_all_skins() {
