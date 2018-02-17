@@ -191,7 +191,7 @@ void SkinManipulator::clear_mess(png::image<png::rgba_pixel>& img) const {
   for (int r = rectlist_critical; r < rectlist_size; ++r) {
     for (int y = rectlist[r].y1; y < rectlist[r].y2; ++y) {
       for (int x = rectlist[r].x1; x < rectlist[r].x2; ++x) {
-        if (img[y][x].alpha >= 128) {
+        if (img[y][x].alpha >= 255) {
           img[y][x].alpha = 255;
         } else {
           img[y][x].alpha = 0;
@@ -210,7 +210,11 @@ double SkinManipulator::to_number(unsigned char uc) const {
 }
 
 unsigned char SkinManipulator::to_pix(double num) const {
-  if (num < 0) {
+  if (num < -256) {
+    return 0;
+  } else if (num > 255) {
+    return 255;
+  } else if (num < 0) {
     return 256 + num;
   } else {
     return num;
