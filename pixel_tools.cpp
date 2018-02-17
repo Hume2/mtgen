@@ -1,3 +1,5 @@
+#include "rect.h"
+
 #include "pixel_tools.h"
 
 namespace pixel_tools {
@@ -92,6 +94,21 @@ void integrate_image(png::image<png::rgba_pixel>& img) {
       img[y][x].blue = img[y][x].blue + img[y-1][x].blue + img[y][x-1].blue - img[y-1][x-1].blue;
       img[y][x].alpha = img[y][x].alpha + img[y-1][x].alpha + img[y][x-1].alpha - img[y-1][x-1].alpha;
     }
+  }
+}
+
+void copy_rect(png::image<png::rgba_pixel>& source,
+               png::image<png::rgba_pixel>& dest, RectMovement rm) {
+  int x2 = rm.dest.x1;
+  for (int x1 = rm.source.x1; x1 < rm.source.x2; ++x1) {
+    int y2 = rm.dest.y1;
+    for (int y1 = rm.source.y1; y1 < rm.source.y2; ++y1) {
+      if (source[y1][x1].alpha != 0) {
+        dest[y2][x2] = source[y1][x1];
+      }
+      y2 += rm.dest.y2;
+    }
+    x2 += rm.dest.x2;
   }
 }
 
