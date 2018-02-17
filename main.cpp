@@ -8,6 +8,7 @@
 #include <png++/png.hpp>
 
 #include "pixel_tools.h"
+#include "progress.h"
 #include "rect.h"
 #include "shape.h"
 #include "skin_manipulator.h"
@@ -45,7 +46,13 @@ int main(int argc, char** argv) {
     boost::archive::binary_iarchive ia(ifs);
     ia >> tf;
   }
-  sm.save(tf.generate_random(SHAPE_ORTHOPLEX), "random.png");
+  Progress pr("Generating stuff", 1000, true);
+  for (int i = 0; i < 1000; ++i) {
+    sm.save(tf.generate_random(SHAPE_ORTHOPLEX), "results/random_" + std::to_string(i) + ".png");
+    pr.step_one();
+  }
+  pr.done();
+
   //tf.show_trees();
   return 0;
 }
