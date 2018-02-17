@@ -40,3 +40,17 @@ std::vector<Rect> load_rects(std::string filename) {
 
   return result;
 }
+
+RectMovement::RectMovement() :
+  source(),
+  dest()
+{
+
+}
+
+RectMovement::RectMovement(Rect source_, Rect dest_) :
+  source(source_),
+  dest(dest_)
+{
+
+}

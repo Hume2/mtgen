@@ -15,6 +15,15 @@ class Rect
     int surface() const;
 };
 
+class RectMovement
+{
+  public:
+    RectMovement();
+    RectMovement(Rect source_, Rect dest_);
+
+    Rect source, dest;
+};
+
 std::vector<Rect> load_rects(std::string filename);
 
 #endif // RECT_H
