@@ -25,7 +25,7 @@ MatrixBranch::MatrixBranch(const boost::numeric::ublas::matrix<double>& matrix_,
   using namespace boost::numeric::ublas;
   parent = parent_;
   for (int i = my_matrix.size1() - 1; i >= 0; --i) {
-    vector<double> v1(matrix_row<matrix<double> >(my_matrix, 1));
+    vector<double> v1(matrix_row<matrix<double> >(my_matrix, i));
     volume += log2(norm_2(v1));
   }
 }
