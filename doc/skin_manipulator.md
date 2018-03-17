@@ -1,10 +1,10 @@
 # SkinManipulator
 
-SkinManipulator is a VectorLoader and a class that operates with skins.
+SkinManipulator is a [VectorLoader](vector_loader.md) and a class that operates with skins.
 
 ## Methods
 
-* ```SkinManipulator(bool integral_, std::string dirname_, std::string savedir_)``` A constructor. If ```integral_``` is true, the images are not derivated.
+* ```SkinManipulator(bool integral_, std::string dirname_, std::string savedir_)``` A constructor. If ```integral_``` is true, the images are not [derivated](pixel_tools.md).
 
 * ```VectorEntry load(std::string filename)``` Loads a skin from a file.
 * ```void save(VectorEntry img, std::string filename)``` Saves the skin to a file.

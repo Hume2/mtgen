@@ -6,7 +6,7 @@ Trainer is the class that performs training and subdivision. Each trainer may co
 
 * ```Trainer()``` An empty constructor for use only for loading from file.
 * ```Trainer(int vector_size_, std::deque<VectorEntry> dataset_, int depth_ = 0, MatrixBranch* matrix_branch_ = NULL);``` An obsolette constructor.
-* ```Trainer(VectorLoader* loader);``` An efficient constructor that requires a VectorLoader.
+* ```Trainer(VectorLoader* loader);``` An efficient constructor that requires a [VectorLoader](vector_loader.md).
 
 * ```VectorEntry generate_random(Shape shape) const``` Returns a random vector according to current subdivision.
 
@@ -29,6 +29,6 @@ Trainer is the class that performs training and subdivision. Each trainer may co
 * ```std::vector<std::deque<bool> > get_leaves() const``` Returns the references of all leaf trainers in a deque.
 * ```std::shared_ptr<Trainer> cut_leaf(std::deque<bool> history)``` Removes one leaf trainer from the trainer tree.
 * ```void fill_leaf(std::deque<bool> history, int count, Shape shape)``` Fills the given leaf by a certain amount of fake vectors.
-* ```void give_matrix_stock(std::forward_list<std::shared_ptr<MatrixBranch> >* ms)``` Gives the trainer a reference to the matrix stock.
+* ```void give_matrix_stock(std::forward_list<std::shared_ptr<MatrixBranch> >* ms)``` Gives the trainer a reference to the [matrix stock](matrix_branch.md).
 
 * ```void normalise_dataset()``` Orthogonalises the dataset and reduces the dimension if possible.
